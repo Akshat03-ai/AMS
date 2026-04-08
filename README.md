@@ -227,19 +227,16 @@ node index.js
 * 📱 Mobile responsiveness improvements
 * 🧠 Predictive maintenance (AI-based)
 
----
 
 ## 🤝 Contribution
 
 Contributions are welcome! Feel free to fork and submit pull requests.
 
----
 
 ## 📜 License
 
 This project is for academic and demonstration purposes.
 
----
 
 ## 👨‍💻 Author
 
