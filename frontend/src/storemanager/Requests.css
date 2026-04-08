@@ -1,0 +1,436 @@
+/* =========================================
+   PAGE LAYOUT & HEADER
+========================================= */
+.requests-page {
+    padding: 2rem;
+    max-width: 1350px;
+    margin: 0 auto;
+}
+
+.requests-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.requests-header h1 {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #0f172a;
+    margin: 0;
+}
+
+/* Modal Actions Container */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Common Button Style */
+.modal-actions button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Cancel Button */
+.modal-actions button:first-child {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.modal-actions button:first-child:hover {
+    background-color: #e0e0e0;
+}
+
+/* Reject Button */
+.danger-btn {
+    background: linear-gradient(135deg, #ff4d4f, #d32f2f);
+    color: white;
+    box-shadow: 0 2px 6px rgba(211, 47, 47, 0.3);
+}
+
+.danger-btn:hover {
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
+}
+
+/* Optional: Slight click effect */
+.modal-actions button:active {
+    transform: scale(0.96);
+}
+
+.modal-card textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 14px;
+}
+
+.modal-card textarea:focus {
+    outline: none;
+    border-color: #888;
+}
+
+/* =========================================
+   SELECTION SCREEN (Cards)
+========================================= */
+.selection-screen {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 4rem;
+    padding: 0 1rem;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.selection-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.selection-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transform: translateY(-4px);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.selection-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.count-badge {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.selection-card.pending .count-badge {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.selection-card.processed .count-badge {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.selection-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+.enter-btn {
+    width: 100%;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.enter-btn:hover {
+    background: #1d4ed8;
+}
+
+/* =========================================
+   TABLE VIEW & CONTROLS
+========================================= */
+.table-view-container {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.requests-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.requests-controls select {
+    padding: 0.8rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+/* =========================================
+   TABLE STYLING
+========================================= */
+.requests-table {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f8fafc;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Status Badges */
+.status {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-approved {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.status-rejected {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* Table Actions */
+.details-btn,
+.approve-btn,
+.reject-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.details-btn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.details-btn:hover {
+    background: #e2e8f0;
+}
+
+.approve-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.approve-btn:hover {
+    background: #1d4ed8;
+}
+
+.reject-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.reject-btn:hover {
+    background: #dc2626;
+}
+
+/* Detail Row */
+.details-row {
+    background: #f8fafc;
+}
+
+.request-details {
+    padding: 1.5rem;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.request-details p {
+    margin: 0;
+}
+
+.request-details a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.request-details a:hover {
+    text-decoration: underline;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .selection-screen {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .selection-card {
+        max-width: 100%;
+    }
+
+    .requests-controls {
+        flex-direction: column;
+    }
+
+    .requests-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+/* ===== REQUEST TYPE BADGES (GHOST OUTLINE - ENLARGED) ===== */
+
+.req-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background-color: transparent;
+    border-width: 1.5px;
+    border-style: solid;
+}
+
+/* ===== COLORS (Solid borders and text) ===== */
+
+.req-type.issue {
+    color: #2563EB;
+    border-color: #60A5FA;
+}
+
+.req-type.return {
+    color: #16A34A;
+    border-color: #4ADE80;
+}
+
+.req-type.maintenance {
+    color: #D97706;
+    border-color: #FBBF24;
+}
+
+.req-type.disposal {
+    color: #DC2626;
+    border-color: #F87171;
+}
+
+.req-type.procurement {
+    color: #9333EA;
+    border-color: #C084FC;
+}

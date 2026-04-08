@@ -1,0 +1,223 @@
+/* =========================
+   Login Layout
+========================= */
+
+.login-container {
+  height: 100dvh;
+  background: linear-gradient(to bottom,#0f172a 0%,#162844 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -82px;
+}
+
+.login-card {
+  background: #ffffff;
+  padding: 40px;
+  width: 380px;
+  border-radius: 10px;
+  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  margin-top: 50px;
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* =========================
+   Headings
+========================= */
+
+.login-card h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  color: #203a43;
+}
+
+.login-card .subtitle {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 25px;
+  color: #000;
+}
+
+/* =========================
+   Labels
+========================= */
+
+.login-card label {
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 15px;
+  display: block;
+}
+
+/* =========================
+   Input Base
+========================= */
+
+.input-wrapper,
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login-card input {
+  width: 100%;
+  height: 44px;
+  /* controls visual size */
+  padding: 0 40px;
+  margin-top: 6px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   Input Icons
+========================= */
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%) translateY(4px);
+  color: #64748b;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* =========================
+   Password Input Overrides
+========================= */
+
+.login-card input.password-input {
+  padding-right: 38px;
+  /* space for toggle */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) translateY(6px);
+  cursor: pointer;
+  color: #475569;
+  font-size: 18px;
+}
+
+.password-toggle:hover {
+  color: #0f172a;
+}
+
+/* =========================
+   Button
+========================= */
+
+.login-card button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background: #2c5364;
+  color: white;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.login-card button:hover {
+  background: #203a43;
+  transform: translateY(-1px);
+}
+
+.login-card button:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
+
+/* =========================
+   Messages
+========================= */
+
+.error {
+  background: #ffe0e0;
+  color: #b00020;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.success {
+  background: #e0f7e0;
+  color: #1b5e20;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+/* =========================
+   Password Help
+========================= */
+
+.password-help {
+  text-align: left;
+  margin-top: 8px;
+  margin-bottom: 15px;
+}
+
+.password-help a {
+  font-size: 14px;
+  color: #0f4fd0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.password-help a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Footer
+========================= */
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #eee;
+  background: #f5f5f5;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.login-footer p {
+  font-size: 12px;
+  color: #3b3b3b;
+  margin: 0;
+}
+
+/* =========================
+   Mobile Safety
+========================= */
+
+@media (max-width: 420px) {
+  .login-card {
+    width: 90%;
+    padding: 30px 20px;
+  }
+}

@@ -1,0 +1,104 @@
+/* ===============================
+   INVENTORY PAGE
+   =============================== */
+
+.sm-inventory-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 100vh;
+}
+
+/* ===============================
+   SEARCH & SORT CONTROLS (match AssetMaster)
+   =============================== */
+
+.sm-assets-controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.sm-assets-controls input,
+.sm-assets-controls select {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.sm-assets-controls input:focus,
+.sm-assets-controls select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Make add button match input height and align with controls */
+.sm-assets-controls .primary-btn {
+  min-height: 40px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  align-self: center;
+}
+
+/* Ensure action buttons (edit/delete) use consistent sizing when present */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: left;
+  gap: 6px;
+  min-width: 76px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+}
+
+.edit-btn { background: #2563eb; color: white; }
+.edit-btn:hover { background: #1d4ed8; }
+.delete-btn { background: #ef4444; color: white; }
+.delete-btn:hover { background: #dc2626; }
+
+
+/* ===============================
+   STATUS  & CONDITION PILLS
+   =============================== */
+
+.pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.pill.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pill.unavailable {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.pill.good {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.pill.fair {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.pill.poor {
+  background: #fee2e2;
+  color: #991b1b;
+}

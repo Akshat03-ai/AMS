@@ -1,0 +1,232 @@
+/* ===============================
+   STORE MANAGER AUDIT PAGE
+   =============================== */
+
+.sm-audit-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 100vh;
+}
+
+/* ===============================
+   HEADER
+   =============================== */
+
+.sm-audit-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  margin-bottom: 1.5rem;
+}
+
+.sm-audit-header h1 {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ===============================
+   CONTROLS
+   =============================== */
+
+.sm-audit-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.sm-audit-controls input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.sm-audit-controls input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.sm-report-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sm-report-btn:hover {
+  background: #1e3a8a;
+}
+
+.sm-report-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   TABLE
+   =============================== */
+
+.sm-audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
+}
+
+.sm-audit-table thead th {
+  background: #f9fafb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #374151;
+}
+
+.sm-audit-table th,
+.sm-audit-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.sm-audit-table td:last-child {
+  width: 100%;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.sm-audit-table td {
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.sm-audit-table tbody tr:hover {
+  background: #e8f1fb;
+}
+
+/* ===============================
+   CELL STYLES
+   =============================== */
+
+.sm-action {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.sm-placeholder {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ===============================
+   EMPTY STATE
+   =============================== */
+
+.sm-no-results {
+  padding: 1.5rem;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 10px;
+}
+
+/* ===============================
+   MODAL
+   =============================== */
+
+.sm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.sm-modal-card {
+  position: relative;
+  background: white;
+  padding: 1.8rem;
+  border-radius: 14px;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.sm-modal-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sm-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #ef4444;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.sm-modal-close:hover {
+  background: #dc2626;
+}
+
+.sm-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 1rem;
+}
+
+.sm-modal-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+}
+
+.sm-modal-actions button:first-child {
+  background: #ef4444;
+}
+
+.sm-modal-actions button:first-child:hover {
+  background: #dc2626;
+}
+
+.sm-modal-actions button:last-child {
+  background: #10b981;
+}
+
+.sm-modal-actions button:last-child:hover {
+  background: #059669;
+}

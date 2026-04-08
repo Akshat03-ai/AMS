@@ -1,0 +1,297 @@
+.create-user-container {
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 1rem;
+  height: 100%;
+}
+
+/* ===============================
+   CREATE USER HEADER (SAFE FIX)
+   =============================== */
+
+.create-user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  position: relative;
+}
+
+/* LEFT SIDE */
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 150px;   /* prevents collapsing */
+  z-index: 2;
+}
+
+/* CENTER TITLE */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.header-center h1 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.8rem;
+}
+
+/* RIGHT SIDE */
+.header-right {
+  min-width: 150px;
+}
+/* ===============================
+   CREATE USER BACK BUTTON (SCOPED)
+   =============================== */
+
+.create-back-btn {
+  padding: 8px 14px;
+  border-radius: 50px;
+  background: transparent;
+  border:transparent;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.create-back-btn:hover {
+  background: #2563eb;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .create-user-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .header-left,
+  .header-center {
+    justify-self: center;
+  }
+}
+
+/* ===============================
+   ADMIN BACK BUTTON
+   =============================== */
+
+.admin-nav-btn {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+} 
+
+.admin-nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+}
+
+/* ===============================
+   CREATE USER FORM
+   =============================== */
+.create-user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Card Sections */
+.form-card {
+  background: rgba(255, 255, 255, 0.75);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border-radius: 18px;
+  padding: 2rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.form-card h3 {
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+/* Grid Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.2rem;
+}
+
+
+.form-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.form-grid label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #282d35;
+}
+
+.form-grid input,
+.form-grid select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.form-grid input:focus,
+.form-grid select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Submit Button */
+.submit-btn {
+  align-self: flex-end;
+  padding: 12px 26px;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+}
+
+.submit-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-btn {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+/* ===============================
+   AUDIT / REMARKS SECTION
+   =============================== */
+
+.create-user-form textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 50px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-user-form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  background-color: #ffffff;
+}
+
+/* Label styling (keeps consistency with inputs) */
+.create-user-form textarea+.hint,
+.create-user-form .hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Make Audit card visually softer */
+.form-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-card h3::after {
+  content: "AUDIT";
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Optional: slightly dim audit card */
+.form-card.audit {
+  background: #fafafa;
+  border: 1px dashed #a9acb0;
+}
+
+.form-grid input,
+.form-grid select,
+.create-user-form textarea {
+  padding-left: 3px;
+}
+
+/* Back Button */
+.back-btn {
+  padding: 8px 12px;
+  border-radius: 50px;
+  background: transparent;
+  border: 1px solid #1e3a8a;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #2563eb;
+  color: white;
+}

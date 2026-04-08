@@ -1,0 +1,392 @@
+/* ========================================
+   PAGE WRAPPER
+======================================== */
+
+.assignment-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 100vh;
+}
+
+/* ========================================
+   HEADER
+======================================== */
+
+.assignment-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-bottom: 1.5rem;
+}
+
+.assignment-header h1 {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  }
+
+/* ========================================
+   CONTROLS
+======================================== */
+
+.assignment-controls {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.assignment-controls input,
+.assignment-controls select {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.assignment-controls input:focus,
+.assignment-controls select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.assignment-controls button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #1d4ed8;
+  background: #1d4ed8;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.assignment-controls button:hover {
+  background: #1e3a8a;
+}
+
+/* ========================================
+   PRIMARY / SECONDARY / DANGER
+======================================== */
+
+.assignment-primary-btn {
+  background: #1d4ed8;
+  color: white;
+  border: 1px solid #1d4ed8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.assignment-primary-btn:hover {
+  background: #1e3a8a;
+}
+
+.assignment-secondary-btn {
+  background: #ef4444;
+  color: white;
+  border: 1px solid #ef4444;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.assignment-secondary-btn:hover {
+  background: #dc2626;
+}
+
+.assignment-danger-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.assignment-danger-btn:hover {
+  background: #dc2626;
+}
+
+/* ========================================
+   TABLE
+======================================== */
+
+.assignment-table {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border-collapse: collapse;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
+}
+
+.assignment-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #374151;
+  cursor: pointer;
+}
+
+.assignment-table th,
+.assignment-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.assignment-table tbody tr:hover {
+  background: #e8f1fb;
+}
+
+/* ========================================
+   STATUS BADGES
+======================================== */
+
+.assignment-status-active {
+  background: #bbf7d0;
+  color: #065f46;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.assignment-status-returned {
+  background: #e5e7eb;
+  color: #374151;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ========================================
+   EMPTY / ERROR
+======================================== */
+
+.assignment-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.assignment-error {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* ========================================
+   SPINNER
+======================================== */
+
+.assignment-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.assignment-spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #1d4ed8;
+  border-radius: 50%;
+  animation: assignmentSpin 0.8s linear infinite;
+}
+
+@keyframes assignmentSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   MODAL
+======================================== */
+
+.assignment-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.assignment-modal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  width: 520px;
+  max-width: calc(100% - 32px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: assignmentModalSlideIn 0.3s ease-out;
+}
+
+@keyframes assignmentModalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.assignment-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.assignment-modal-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.assignment-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.assignment-modal-close:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.assignment-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assignment-modal-body input,
+.assignment-modal-body select,
+.assignment-modal-body textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.assignment-modal-body input:focus,
+.assignment-modal-body select:focus,
+.assignment-modal-body textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.assignment-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+/* Smaller edit button (distinct color) */
+.assignment-edit-btn {
+  background: #0ea5e9; /* sky-500 */
+  color: white;
+  border: 1px solid #0ea5e9;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.assignment-edit-btn:hover {
+  background: #0284c7;
+}
+
+/* Inline return button shown inside Returned column when not returned */
+.assignment-return-inline {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.assignment-return-inline:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* icon-only buttons */
+.assignment-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: #374151;
+}
+
+.assignment-icon-btn:hover {
+  background: #f3f4f6;
+}
+
+.assignment-delete-btn {
+  color: #ef4444;
+}
+
+.assignment-delete-btn:hover {
+  background: #fee2e2;
+}
+
+.assignment-edit-btn {
+  color: #0ea5e9;
+}
+
+.assignment-edit-btn:hover {
+  background: #e0f2fe;
+}
+
+/* tighten spacing between adjacent icon buttons */
+.assignment-icon-btn + .assignment-icon-btn {
+  margin-left: 6px;
+}

@@ -1,0 +1,718 @@
+/* About.css - Compact Version */
+
+/* Government Color Scheme - Slightly adjusted for compactness */
+
+:root {
+  --gov-blue: #1a365d;
+  --gov-blue-light: #2d4a7c;
+  --gov-gold: #d4af37;
+  --gov-green: #276749;
+  --gov-red: #c53030;
+  --gov-gray: #f8fafc;
+  --gov-gray-dark: #e2e8f0;
+  --gov-text: #2d3748;
+  --gov-text-light: #4a5568;
+}
+
+/* Base Styles - More Compact */
+.about-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--gov-text);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+/* Hero Section - Compact */
+.about-hero {
+  background: linear-gradient(135deg, var(--gov-blue) 0%, var(--gov-blue-light) 100%);
+  color: white;
+  padding: 2.5rem 1.5rem;
+  border-radius: 0 0 16px 16px;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.about-title {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.about-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+}
+
+.trust-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* Mission Card - Compact */
+.mission-card {
+  background: white;
+  border: 2px solid var(--gov-blue);
+  border-radius: 12px;
+  padding: 1.8rem;
+  margin: -2rem auto 2.5rem;
+  max-width: 800px;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  box-shadow: 0 8px 20px rgba(26, 54, 93, 0.08);
+}
+
+.mission-icon {
+  background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light));
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mission-card h2 {
+  color: var(--gov-blue);
+  margin-bottom: 0.8rem;
+  font-size: 1.6rem;
+}
+
+.mission-card p {
+  color: var(--gov-text-light);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Section Styles - Compact */
+.section {
+  padding: 2.5rem 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  color: var(--gov-blue);
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+
+.section-header p {
+  color: var(--gov-text-light);
+  font-size: 1rem;
+}
+
+.alt-bg {
+  background: var(--gov-gray);
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+/* Objectives Grid - Compact */
+.objectives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.objective-card {
+  background: white;
+  border: 1px solid var(--gov-gray-dark);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+}
+
+.objective-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--gov-blue);
+}
+
+.objective-icon {
+  margin-bottom: 1rem;
+  color: var(--gov-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.objective-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.objective-card h3 {
+  color: var(--gov-blue);
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.objective-card p {
+  color: var(--gov-text-light);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Roles Grid - Compact */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.role-card {
+  background: white;
+  border: 2px solid var(--gov-gray-dark);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+}
+
+.role-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.role-card.highlight {
+  border-color: var(--gov-gold);
+  background: linear-gradient(135deg, #fffaf0, #fff5e6);
+}
+
+.role-card.highlight::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gov-gold), #f7c948);
+}
+
+.role-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.role-header svg {
+  width: 22px;
+  height: 22px;
+}
+
+.role-header h3 {
+  color: var(--gov-blue);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.role-duties {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.role-duties li {
+  padding: 0.4rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  color: var(--gov-text-light);
+  font-size: 0.9rem;
+}
+
+.role-duties li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gov-green);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Technology Stack - Compact */
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.tech-category {
+  text-align: center;
+  min-width: 180px;
+}
+
+.tech-category h3 {
+  color: var(--gov-blue);
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+}
+
+.tech-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.tech-tag {
+  background: var(--gov-blue);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.tech-tag:hover {
+  background: var(--gov-blue-light);
+  transform: scale(1.03);
+}
+
+/* Security Grid - Compact */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.security-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--gov-gray-dark);
+  transition: all 0.2s ease;
+}
+
+.security-item:hover {
+  border-color: var(--gov-blue);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.security-item svg {
+  color: var(--gov-blue);
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+}
+
+.security-item h3 {
+  color: var(--gov-blue);
+  margin-bottom: 0.4rem;
+  font-size: 1.1rem;
+}
+
+.security-item p {
+  color: var(--gov-text-light);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Split Section - Compact */
+.split-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 0.7rem;
+  padding: 2rem 3rem 2rem 3rem; 
+}
+
+.split-card {
+  padding: 1.5rem;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.split-card:hover {
+  transform: translateY(-3px);
+}
+
+.split-card.caution {
+  background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+  border: 1px solid #fed7d7;
+}
+
+.split-card.future {
+  background: linear-gradient(135deg, #f0fff4, #e6fffa);
+  border: 1px solid #c6f6d5;
+}
+
+.split-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.split-header svg {
+  width: 18px;
+  height: 18px;
+}
+
+.split-header h2 {
+  color: var(--gov-blue);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.split-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.split-card li {
+  padding: 0.3rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  color: var(--gov-text-light);
+  font-size: 0.88rem;
+  line-height: 1.3;
+  margin-bottom: 0.2rem; 
+}
+
+.split-card.caution li::before {
+  content: '⚠️';
+  position: absolute;
+  left: 0;
+  font-size: 0.9rem;
+}
+
+.split-card.future li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--gov-green);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Call to Action - Compact */
+.cta-section {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, var(--gov-gray), #edf2f7);
+  border-radius: 16px;
+  margin: 2.5rem 0;
+}
+
+.cta-section h2 {
+  color: var(--gov-blue);
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.cta-section p {
+  color: var(--gov-text-light);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gov-blue);
+  border: 2px solid var(--gov-blue);
+}
+
+.btn-outline:hover {
+  background: var(--gov-blue);
+  color: white;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light));
+  color: white;
+  border: 2px solid var(--gov-blue);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(26, 54, 93, 0.15);
+}
+
+/* Responsive Design - Adjusted for compactness */
+@media (max-width: 768px) {
+  .about-container {
+    padding: 0 12px;
+  }
+  
+  .about-hero {
+    padding: 2rem 1rem;
+  }
+  
+  .about-title {
+    font-size: 1.8rem;
+  }
+  
+  .about-subtitle {
+    font-size: 1rem;
+  }
+  
+  .mission-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+    margin: -1.5rem auto 2rem;
+    gap: 1rem;
+  }
+  
+  .mission-icon {
+    align-self: center;
+    padding: 0.8rem;
+  }
+  
+  .section {
+    padding: 2rem 0;
+  }
+  
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .split-section {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  
+  .objectives-grid,
+  .roles-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  
+  .tech-stack {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .security-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .trust-indicators {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .trust-item {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-title {
+    font-size: 1.6rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .cta-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .objective-card,
+  .role-card,
+  .split-card,
+  .security-item {
+    padding: 1.2rem;
+  }
+  
+  .mission-card h2,
+  .role-header h3,
+  .split-header h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Even more compact for mobile */
+@media (max-width: 360px) {
+  .about-container {
+    padding: 0 8px;
+  }
+  
+  .about-hero {
+    padding: 1.5rem 0.8rem;
+  }
+  
+  .about-title {
+    font-size: 1.4rem;
+  }
+  
+  .badge {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .objective-card,
+  .role-card,
+  .split-card,
+  .security-item {
+    padding: 1rem;
+  }
+}
+
+/* Subtle animation for icons */
+.objective-icon svg,
+.role-header svg,
+.security-item svg,
+.split-header svg {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.objective-card:hover .objective-icon svg,
+.role-card:hover .role-header svg,
+.security-item:hover svg,
+.split-card:hover .split-header svg {
+  transform: scale(1.08);
+  color: var(--gov-gold);
+}
+
+/* Asset Request & Approval Workflow */
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.workflow-step {
+  background: white;
+  border: 1px solid var(--gov-gray-dark);
+  border-radius: 10px;
+  padding: 1.6rem;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+}
+
+.workflow-step:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--gov-blue);
+}
+
+/* Step number badge */
+.workflow-step::before {
+  content: attr(data-step);
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--gov-blue),
+    var(--gov-blue-light)
+  );
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 14px;
+  letter-spacing: 0.4px;
+}
+
+/* Step heading */
+.workflow-step h3 {
+  color: var(--gov-blue);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+/* Step description */
+.workflow-step p {
+  color: var(--gov-text-light);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}

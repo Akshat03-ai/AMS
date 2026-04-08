@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ams-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: FIREBASE_SERVICE_ACCOUNT
+        sync: false # Set this manually in Render dashboard
+      - key: PORT
+        fromService:
+          type: web
+          name: ams-backend
+          property: port

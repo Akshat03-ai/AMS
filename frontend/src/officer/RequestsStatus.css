@@ -1,0 +1,285 @@
+/* ===============================
+   CONTAINER
+================================= */
+.requests-page {
+    max-width: 1350px;
+    margin: 2rem auto;
+    padding: 1rem;
+    min-height: 60vh;
+}
+
+/* ===============================
+   HEADER
+================================= */
+.requests-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.requests-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #161a26;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* ===============================
+   BUTTONS
+================================= */
+.back-bttnn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 10px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.back-bttnn:hover {
+    background-color: #2563eb;
+    color: white;
+    transform: translateX(-4px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* ===============================
+   CONTROLS (Search & Filters)
+================================= */
+.requests-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    
+    /* Inheriting the glassmorphism card style from reference */
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 28px rgba(31, 38, 135, 0.1);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 12px;
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+.search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px 10px 38px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+    background: #fff;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filters svg {
+    color: #6b7280;
+    font-size: 1.2rem;
+}
+
+.filters select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+    background: #fff;
+    cursor: pointer;
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ===============================
+   TABLE
+================================= */
+.requests-table {
+    /* Wrapping the table in the matching card style */
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 28px rgba(31, 38, 135, 0.1);
+    overflow-x: auto;
+}
+
+.requests-table table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.requests-table th {
+    padding: 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.requests-table td {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #383a40;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.requests-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.requests-table tbody tr:hover {
+    background-color: rgba(37, 99, 235, 0.04);
+}
+
+.requests-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===============================
+   STATUS BADGES
+================================= */
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+/* Inherited from .alert.success */
+.status-approved {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+/* Inherited from .alert.error */
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* New custom state to match the theme */
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+/* ===============================
+   LOADING & EMPTY STATES
+================================= */
+.loading,
+.empty {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.1rem;
+    color: #6b7280;
+    font-weight: 500;
+    
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 28px rgba(31, 38, 135, 0.1);
+}
+
+/* ===============================
+   RESPONSIVE
+================================= */
+@media (max-width: 768px) {
+    .requests-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .requests-controls {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .filters {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .requests-table {
+        padding: 1rem;
+    }
+}
+
+.details-btn{
+  padding:4px 10px;
+  border:none;
+  background:#24548F;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.details-row{
+  background:#fafafa;
+}
+
+.request-details{
+  padding:12px 6px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:14px;
+}

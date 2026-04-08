@@ -1,0 +1,206 @@
+.admin-departments-page {
+    max-width: 1300px;
+    padding: 1.5rem 1rem 3rem;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 1rem 0 1.5rem;
+}
+
+.admin-tabs button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.admin-tabs button.active {
+    background: #1e3a8a;
+    color: white;
+    border-color: #1e3a8a;
+}
+
+.dept-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    margin-bottom: 1.5rem;
+}
+
+.dept-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 10px;
+    border-radius: 50px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.back-btn:hover {
+    background-color: #2563eb;
+    color: white;
+    transform: translateX(-4px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.back-btn:active {
+    transform: scale(0.8);
+}
+
+.dept-controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dept-controls input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1d4ed8;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    background: #1e3a8a;
+}
+
+.secondary-btn {
+    background: red;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.secondary-btn:hover {
+    background: #dc2626;
+}
+
+.dept-table {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: collapse;
+}
+
+.dept-table thead th {
+    position: sticky;
+    top: 0;
+    background: #f9fafb;
+    z-index: 2;
+}
+
+.dept-table tbody tr {
+    background: white;
+}
+
+.dept-table tbody tr:hover {
+    background: #e8f1fb;
+}
+
+.dept-table th,
+.dept-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.actions button {
+    border: none;
+    background: #f1f5f9;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.actions .danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.no-results {
+    padding: 1rem;
+    text-align: center;
+    color: #6b7280;
+}
+
+/* Modal */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    width: 400px;
+}
+
+.modal-card input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.modal-card input::placeholder {
+    color: #111827;
+}
