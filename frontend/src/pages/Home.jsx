@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import "./Home.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE || "http://localhost:5000";
+
 const Home = () => {
   const [statsData, setStatsData] = useState({
     totalAssets: null,
@@ -23,7 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     let mounted = true;
-    fetch("/api/public/stats")
+    fetch(`${API_BASE_URL}/api/public/stats`)
       .then((res) => res.json())
       .then((data) => {
         if (!mounted) return;
