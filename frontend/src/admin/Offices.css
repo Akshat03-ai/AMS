@@ -248,3 +248,198 @@
 {
   color: #111827;
 }
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1024px) {
+  .admin-offices-page {
+    padding: 1rem;
+  }
+
+  .office-table {
+    font-size: 0.85rem;
+  }
+
+  .office-table th,
+  .office-table td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-offices-page {
+    padding: 0.75rem;
+  }
+
+  .offices-header .office-title {
+    font-size: 1.5rem;
+    position: static;
+    transform: none;
+    text-align: center;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-tabs button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .office-controls {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .office-controls input,
+  .office-controls select {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .office-table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .office-table th,
+  .office-table td {
+    padding: 8px 6px;
+    white-space: nowrap;
+  }
+
+  .office-table thead th {
+    position: sticky;
+    left: 0;
+    background: #f9fafb;
+    z-index: 10;
+  }
+
+  .actions {
+    gap: 6px;
+  }
+
+  .actions button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .modal-card h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-offices-page {
+    padding: 0.5rem;
+  }
+
+  .offices-header {
+    min-height: 40px;
+  }
+
+  .offices-header .office-title {
+    font-size: 1.3rem;
+  }
+
+  .office-table {
+    font-size: 0.75rem;
+  }
+
+  .office-table th,
+  .office-table td {
+    padding: 6px 4px;
+  }
+
+  .office-controls input,
+  .office-controls select {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+
+  .modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .modal-card input,
+  .modal-card select {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-offices-page {
+    padding: 0.25rem;
+  }
+
+  .offices-header .office-title {
+    font-size: 1.2rem;
+  }
+
+  .office-table {
+    font-size: 0.7rem;
+  }
+
+  .office-table th,
+  .office-table td {
+    padding: 4px 3px;
+  }
+
+  .admin-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tabs button {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .office-controls input,
+  .office-controls select {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .actions button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+
+  .modal-card h3 {
+    font-size: 1rem;
+  }
+}

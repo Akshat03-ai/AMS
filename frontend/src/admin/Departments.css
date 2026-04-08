@@ -204,3 +204,195 @@
 .modal-card input::placeholder {
     color: #111827;
 }
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1024px) {
+  .admin-departments-page {
+    padding: 1rem;
+  }
+
+  .dept-table {
+    font-size: 0.85rem;
+  }
+
+  .dept-table th,
+  .dept-table td {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-departments-page {
+    padding: 0.75rem;
+  }
+
+  .dept-header .dept-title {
+    font-size: 1.5rem;
+    position: static;
+    transform: none;
+    text-align: center;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-tabs button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .dept-controls {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .dept-controls input {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .dept-table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dept-table th,
+  .dept-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  .dept-table th {
+    position: sticky;
+    left: 0;
+    background: #f9fafb;
+    z-index: 10;
+  }
+
+  .actions {
+    gap: 6px;
+  }
+
+  .actions button {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+
+  .modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .modal-card h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-departments-page {
+    padding: 0.5rem;
+  }
+
+  .dept-header {
+    min-height: 40px;
+  }
+
+  .dept-header .dept-title {
+    font-size: 1.3rem;
+  }
+
+  .dept-table {
+    font-size: 0.75rem;
+  }
+
+  .dept-table th,
+  .dept-table td {
+    padding: 4px 3px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .modal-card input {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-departments-page {
+    padding: 0.25rem;
+  }
+
+  .dept-header .dept-title {
+    font-size: 1.2rem;
+  }
+
+  .dept-table {
+    font-size: 0.7rem;
+  }
+
+  .dept-table th,
+  .dept-table td {
+    padding: 3px 2px;
+  }
+
+  .admin-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-tabs button {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .dept-controls input {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .actions button {
+    padding: 3px 5px;
+    font-size: 0.75rem;
+  }
+
+  .modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+
+  .modal-card h3 {
+    font-size: 1rem;
+  }
+}

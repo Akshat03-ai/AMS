@@ -386,7 +386,189 @@
   background: #e0f2fe;
 }
 
-/* tighten spacing between adjacent icon buttons */
-.assignment-icon-btn + .assignment-icon-btn {
-  margin-left: 6px;
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 1024px) {
+  .assignment-wrapper {
+    padding: 1rem;
+  }
+
+  .assignment-controls {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .assignment-table {
+    font-size: 0.85rem;
+  }
+
+  .assignment-table th,
+  .assignment-table td {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .assignment-wrapper {
+    padding: 0.75rem;
+  }
+
+  .assignment-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .assignment-controls {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .assignment-controls input,
+  .assignment-controls select {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .assignment-controls button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* Table becomes horizontally scrollable on mobile */
+  .assignment-table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .assignment-table th,
+  .assignment-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  .assignment-table th {
+    position: sticky;
+    left: 0;
+    background: #f9fafb;
+    z-index: 10;
+  }
+
+  .assignment-modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .assignment-modal-header h2 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .assignment-wrapper {
+    padding: 0.5rem;
+  }
+
+  .assignment-header {
+    min-height: 40px;
+  }
+
+  .assignment-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .assignment-table {
+    font-size: 0.75rem;
+  }
+
+  .assignment-table th,
+  .assignment-table td {
+    padding: 4px 3px;
+  }
+
+  .assignment-status-active,
+  .assignment-status-returned {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  .assignment-primary-btn,
+  .assignment-secondary-btn,
+  .assignment-danger-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .assignment-icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .assignment-modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .assignment-modal-body {
+    gap: 8px;
+  }
+
+  .assignment-modal-body input,
+  .assignment-modal-body select,
+  .assignment-modal-body textarea {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .assignment-modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-modal-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .assignment-wrapper {
+    padding: 0.25rem;
+  }
+
+  .assignment-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .assignment-table {
+    font-size: 0.7rem;
+  }
+
+  .assignment-table th,
+  .assignment-table td {
+    padding: 3px 2px;
+  }
+
+  .assignment-controls input,
+  .assignment-controls select {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .assignment-controls button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .assignment-modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+
+  .assignment-modal-header h2 {
+    font-size: 1rem;
+  }
 }

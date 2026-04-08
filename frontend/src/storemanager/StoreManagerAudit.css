@@ -199,6 +199,151 @@
   background: #dc2626;
 }
 
+/* ===============================
+   RESPONSIVE DESIGN
+   =============================== */
+
+@media (max-width: 1024px) {
+  .sm-audit-page {
+    padding: 1rem;
+  }
+
+  .sm-audit-controls {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .sm-audit-table {
+    font-size: 0.85rem;
+  }
+
+  .sm-audit-table th,
+  .sm-audit-table td {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sm-audit-page {
+    padding: 0.75rem;
+  }
+
+  .sm-audit-header h1 {
+    font-size: 1.5rem;
+    position: static;
+    transform: none;
+    text-align: center;
+  }
+
+  .sm-audit-controls {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .sm-audit-controls input {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+
+  .sm-report-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* Table becomes horizontally scrollable on mobile */
+  .sm-audit-table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sm-audit-table th,
+  .sm-audit-table td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  .sm-audit-table th {
+    position: sticky;
+    left: 0;
+    background: #f9fafb;
+    z-index: 10;
+  }
+
+  .sm-modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .sm-modal-card h3 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .sm-audit-page {
+    padding: 0.5rem;
+  }
+
+  .sm-audit-header {
+    min-height: 40px;
+  }
+
+  .sm-audit-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .sm-audit-table {
+    font-size: 0.75rem;
+  }
+
+  .sm-audit-table th,
+  .sm-audit-table td {
+    padding: 4px 3px;
+  }
+
+  .sm-modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sm-audit-page {
+    padding: 0.25rem;
+  }
+
+  .sm-audit-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .sm-audit-table {
+    font-size: 0.7rem;
+  }
+
+  .sm-audit-table th,
+  .sm-audit-table td {
+    padding: 3px 2px;
+  }
+
+  .sm-audit-controls input {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .sm-report-btn {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .sm-modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+}
+
 .sm-modal-actions {
   display: flex;
   justify-content: center;

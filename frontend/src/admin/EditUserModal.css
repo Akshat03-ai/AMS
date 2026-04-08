@@ -68,3 +68,71 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 768px) {
+  .modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .modal-body input,
+  .modal-body select {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+
+  .modal-footer {
+    text-align: center;
+  }
+
+  .modal-footer button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .modal-body {
+    gap: 0.5rem;
+  }
+
+  .modal-footer button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .modal-body input,
+  .modal-body select {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .modal-footer button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}

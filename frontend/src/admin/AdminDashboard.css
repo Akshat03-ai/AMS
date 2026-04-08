@@ -398,7 +398,22 @@
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+@media (max-width: 1024px) {
+  .admin-dashboard-container {
+    padding: 1.5rem;
+  }
+
+  .action-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .admin-dashboard-container {
+    padding: 1rem;
+  }
+
   .officer-dashboard-container {
     padding: 1rem;
   }
@@ -416,5 +431,49 @@
   .officer-header {
     border-left: none;
     border-top: 5px solid var(--primary-blue);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .action-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .action-card {
+    padding: 1.5rem;
+  }
+
+  .action-card h3 {
+    font-size: 1rem;
+  }
+
+  .info-card {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard-container {
+    padding: 0.75rem;
+  }
+
+  .officer-header {
+    padding: 1.5rem;
+  }
+
+  .text-section h1 {
+    font-size: 1.5rem;
+  }
+
+  .action-card {
+    padding: 1.25rem;
+  }
+
+  .info-card {
+    padding: 1rem;
   }
 }

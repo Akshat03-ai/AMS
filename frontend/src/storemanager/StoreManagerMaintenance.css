@@ -246,3 +246,190 @@ tbody tr:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1024px) {
+  .maintenance-wrapper {
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .maintenance-wrapper {
+    padding: 0.75rem;
+  }
+
+  .maintenance-header h1 {
+    font-size: 1.5rem;
+    position: static;
+    transform: none;
+    text-align: center;
+  }
+
+  .maintenance-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .maintenance-tabs button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  table {
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th,
+  td {
+    padding: 6px 4px;
+    white-space: nowrap;
+  }
+
+  th {
+    position: sticky;
+    left: 0;
+    background: #f9fafb;
+    z-index: 10;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .action-icon {
+    font-size: 1rem;
+  }
+
+  .modal-card {
+    width: 95%;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .modal-card h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .maintenance-wrapper {
+    padding: 0.5rem;
+  }
+
+  .maintenance-header {
+    min-height: 40px;
+  }
+
+  .maintenance-header h1 {
+    font-size: 1.3rem;
+  }
+
+  table {
+    font-size: 0.75rem;
+  }
+
+  th,
+  td {
+    padding: 4px 3px;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+
+  .primary-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .modal-card {
+    width: 98%;
+    padding: 12px;
+  }
+
+  .modal-card input,
+  .modal-card select,
+  .modal-card textarea {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .maintenance-wrapper {
+    padding: 0.25rem;
+  }
+
+  .maintenance-header h1 {
+    font-size: 1.2rem;
+  }
+
+  table {
+    font-size: 0.7rem;
+  }
+
+  th,
+  td {
+    padding: 3px 2px;
+  }
+
+  .maintenance-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .maintenance-tabs button {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-icon {
+    font-size: 0.9rem;
+  }
+
+  .modal-card {
+    width: 100%;
+    margin: 16px;
+    padding: 10px;
+  }
+
+  .modal-card h3 {
+    font-size: 1rem;
+  }
+}
