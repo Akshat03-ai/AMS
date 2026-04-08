@@ -103,8 +103,8 @@ Firebase (Auth + Firestore)
 ### 🖥 Frontend
 
 * React.js
-* React Router
-* CSS (custom styling)
+* CSS3
+* HTML5
 * Lucide Icons
 
 ### 🔧 Backend
