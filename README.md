@@ -241,4 +241,5 @@ This project is for academic and demonstration purposes.
 ## 👨‍💻 Author
 
 Akshat Dubey
+
 MCA Student | Full Stack Developer
