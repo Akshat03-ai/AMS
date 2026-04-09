@@ -298,20 +298,32 @@ app.get(
     try {
       const snapshot = await db.collection("Users").get();
 
+      const userMap = {};
+      snapshot.docs.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data.user_id) {
+          userMap[data.user_id] = data.name;
+        }
+      });
+
       const users = await Promise.all(
         snapshot.docs.map(async (docSnap) => {
           const data = docSnap.data();
           const uid = docSnap.id;
 
-          const authUser = await admin.auth().getUser(uid);
+          let disabled = false;
+          try {
+            const authUser = await admin.auth().getUser(uid);
+            disabled = authUser.disabled;
+          } catch (authErr) {
+            console.warn(`Unable to fetch auth status for user ${uid}:`, authErr.message);
+          }
 
           return {
-            id: doc.id,
+            uid,
             ...data,
+            disabled,
             officer_name: userMap[data.officer_id] || "Unknown",
-            maintenance_date: data.maintenance_date?.toDate
-              ? data.maintenance_date.toDate()
-              : data.maintenance_date
           };
         })
       );
