@@ -5,8 +5,14 @@
 .sm-asset-master-page {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1rem;
   min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+  .sm-asset-master-page {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
 
 /* ===============================
@@ -17,20 +23,30 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: 52px;
   margin-bottom: 1.2rem;
+  gap: 1rem;
 }
 
 .sm-assets-header h1 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: static;
+  transform: none;
+  left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;            /* FiBox spacing */
-  font-size: 1.9rem;
+  gap: 10px;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #0f172a;
+  flex: 1;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .sm-assets-header h1 {
+    font-size: 1.9rem;
+  }
 }
 
 .back-btn {

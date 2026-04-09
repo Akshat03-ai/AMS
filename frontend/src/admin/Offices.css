@@ -43,18 +43,27 @@
   position: relative;      
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: 48px;
   margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .office-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  position: static;
+  transform: none;
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .office-title {
+    font-size: 1.8rem;
+  }
 }
 
 

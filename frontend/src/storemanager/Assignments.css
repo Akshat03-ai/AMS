@@ -5,8 +5,14 @@
 .assignment-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1rem;
   min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .assignment-wrapper {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
 
 /* ========================================
@@ -16,10 +22,12 @@
 .assignment-header {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 48px;
   margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
 .assignment-header h1 {
@@ -27,7 +35,16 @@
   gap: 10px;
   align-items: center;
   margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .assignment-header {
+    flex-direction: row;
+    justify-content: space-between;
   }
+}
 
 /* ========================================
    CONTROLS
@@ -35,9 +52,17 @@
 
 .assignment-controls {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  gap: 1rem;
-  margin: 1.5rem 0 2rem;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .assignment-controls {
+    grid-template-columns: 1fr auto auto auto;
+    gap: 1rem;
+    margin: 1.5rem 0 2rem;
+  }
 }
 
 .assignment-controls input,
