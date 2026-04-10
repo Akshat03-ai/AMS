@@ -28,10 +28,10 @@
 }
 
 .dept-header {
-    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     min-height: 48px;
     margin-bottom: 1.5rem;
     gap: 1rem;
@@ -80,6 +80,17 @@
     transform: scale(0.8);
 }
 
+.mobile-back-btn {
+    flex-shrink: 0;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+}
+
 .dept-controls {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -125,9 +136,11 @@
 
 .dept-table {
     width: 100%;
+    min-width: 720px;
     background: #ffffff;
     border-radius: 10px;
     overflow: hidden;
+    display: block;
     border-collapse: collapse;
 }
 
@@ -241,6 +254,18 @@
     position: static;
     transform: none;
     text-align: center;
+    width: 100%;
+    order: 2;
+  }
+
+  .mobile-back-btn {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    border-radius: 12px;
   }
 
   .admin-tabs {

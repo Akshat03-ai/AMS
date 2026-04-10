@@ -7,6 +7,7 @@ import { AiOutlineHome, AiOutlineInfoCircle } from "react-icons/ai";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { MdDashboard } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
+import { HiMenuAlt3, HiX } from "react-icons/hi";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -16,6 +17,7 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -59,6 +61,17 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -98,12 +111,23 @@ const Navbar = () => {
         </div>
       </Link>
 
-      <ul className="nav-links">
+      <button
+        type="button"
+        className="menu-toggle"
+        aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+        aria-expanded={isMenuOpen}
+        onClick={() => setIsMenuOpen((prev) => !prev)}
+      >
+        {isMenuOpen ? <HiX /> : <HiMenuAlt3 />}
+      </button>
+
+      <ul className={`nav-links ${isMenuOpen ? "nav-links-open" : ""}`}>
         {links.map((link) => (
           <li key={link.name} className="nav-item">
             <NavLink
               to={link.path}
               className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setIsMenuOpen(false)}
             >
               <span className="icon">{link.icon}</span>
               {link.name}
@@ -117,6 +141,7 @@ const Navbar = () => {
             <NavLink
               to={dashboardPath}
               className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setIsMenuOpen(false)}
             >
               <span className="icon"><MdDashboard /></span>
               Dashboard
@@ -130,6 +155,7 @@ const Navbar = () => {
             <NavLink
               to={profilePath}
               className={({ isActive }) => (isActive ? "active" : "")}
+              onClick={() => setIsMenuOpen(false)}
             >
               <span className="icon">
                 {profilePhoto ? (
@@ -153,6 +179,7 @@ const Navbar = () => {
             <button
               onClick={() => navigate("/login")}
               className="login-btn"
+              type="button"
             >
               <span className="icon"><BiLogIn /></span>
               Login
@@ -163,6 +190,7 @@ const Navbar = () => {
             <button
               onClick={handleLogout}
               className="logout-btn"
+              type="button"
             >
               <span className="icon"><BiLogOut /></span>
               Logout

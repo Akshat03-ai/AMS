@@ -409,7 +409,7 @@ function Assignments() {
 
             <div className="assignment-header">
                 <button
-                    className="back-btn"
+                    className="back-btn mobile-back-btn"
                     onClick={() => navigate("/store-manager/dashboard")}
                 >
                     ← Back
@@ -476,6 +476,7 @@ function Assignments() {
                     {filteredAssignments.length === 0 ? (
                         <div className="assignment-empty">No assignments found</div>
                     ) : (
+                        <div className="table-scroll">
                         <table className="assignment-table">
                             <thead>
                                 <tr>
@@ -553,6 +554,7 @@ function Assignments() {
                                 })}
                             </tbody>
                         </table>
+                        </div>
                     )}
                 </>
             )}

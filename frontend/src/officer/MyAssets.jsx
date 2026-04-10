@@ -134,7 +134,7 @@ function MyAssets() {
     return (
         <div className="myassets-wrapper">
             <div className="myassets-header">
-                <button className="back-btnn" onClick={() => navigate("/officer/dashboard")}>
+                <button className="back-btnn mobile-back-btn" onClick={() => navigate("/officer/dashboard")}>
                     ← Back
                 </button>
 
@@ -202,6 +202,7 @@ function MyAssets() {
                                         "No assets found."}
                     </p>
                 ) : (
+                    <div className="table-scroll">
                     <table className="myassets-table">
                         <thead>
                             <tr>
@@ -309,6 +310,7 @@ function MyAssets() {
                             })}
                         </tbody>
                     </table>
+                    </div>
                 )
             }
             {previewAsset && (

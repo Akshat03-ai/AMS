@@ -12,19 +12,17 @@
 
 /* --- HEADER --- */
 .lifecycle-header {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
   text-align: center;
   margin-bottom: 4rem;
-  position: relative;
+  gap: 0.9rem;
 }
 
 .back-btn {
-  position: absolute;
-  left: 0;
-  top: 0;
+  justify-self: start;
 }
 
 .lifecycle-header h1 {
@@ -177,5 +175,22 @@
 @media (max-width: 768px) {
   .lifecycle-grid {
     grid-template-columns: 1fr;
+  }
+
+  .lifecycle-wrapper {
+    padding: 1.25rem 0.9rem 2rem;
+  }
+
+  .back-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    border-radius: 12px;
+  }
+
+  .lifecycle-header h1 {
+    font-size: 1.8rem;
   }
 }

@@ -18,18 +18,12 @@
    HEADER
    ========================= */
 .myassets-header {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     align-items: center;
     gap: 1rem;
     margin-bottom: 2rem;
-    position: relative;
-}
-
-.myassets-header .back-btnn {
-    position: absolute;
-    left: 0;
-    grid-column: unset;
+    justify-items: center;
 }
 
 .myassets-header h1 {
@@ -46,9 +40,9 @@
 
 @media (min-width: 768px) {
     .myassets-header {
-        flex-direction: row;
-        justify-content: space-between;
+        grid-template-columns: auto 1fr auto;
         gap: 1rem;
+        justify-items: stretch;
     }
     
     .myassets-header h1 {
@@ -58,7 +52,6 @@
 }
 
 .back-btnn {
-    grid-column: 1;
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -143,6 +136,13 @@
 /* =========================
    TABLE
    ========================= */
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px;
+}
+
 .myassets-table {
     width: 100%;
     border-collapse: collapse;
@@ -150,6 +150,11 @@
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    display: block;
+}
+
+.table-scroll .myassets-table {
+    min-width: 960px;
 }
 
 .myassets-table th,
@@ -240,6 +245,29 @@
         width: 60px;
         height: 45px;
     }
+
+    .myassets-header {
+        justify-items: stretch;
+    }
+
+    .mobile-back-btn,
+    .header-stat {
+        justify-self: stretch;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mobile-back-btn {
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        border-radius: 12px;
+    }
+
+    .header-stat {
+        justify-content: center;
+    }
 }
 
 /* =========================
@@ -324,7 +352,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 3000;
 }
 
 .preview-box {
@@ -443,4 +471,8 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.mobile-back-btn {
+    justify-self: start;
 }

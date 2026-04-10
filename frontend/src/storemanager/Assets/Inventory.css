@@ -9,6 +9,57 @@
   min-height: 100vh;
 }
 
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
+}
+
+.sm-assets-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(31, 38, 135, 0.12);
+}
+
+.sm-assets-table th,
+.sm-assets-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.sm-assets-table thead th {
+  background: #f1f5f9;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+.sm-assets-table tbody tr:hover {
+  background: #eef2ff;
+}
+
+.highlight {
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.empty-state {
+  padding: 2.2rem;
+  text-align: center;
+  color: #6b7280;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px dashed #c7d2fe;
+}
+
 /* ===============================
    SEARCH & SORT CONTROLS (match AssetMaster)
    =============================== */
@@ -101,4 +152,14 @@
 .pill.poor {
   background: #fee2e2;
   color: #991b1b;
+}
+
+@media (max-width: 768px) {
+  .sm-inventory-page {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .sm-assets-controls {
+    grid-template-columns: 1fr;
+  }
 }

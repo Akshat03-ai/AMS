@@ -97,6 +97,8 @@
   align-items: center;
   gap: 2rem;
   justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
 }
 
 .avatar-circle {
@@ -456,7 +458,13 @@
     padding: 1rem;
   }
 
-  .header-content {
+  .dashboard-topbar {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .of-header-content {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
@@ -469,5 +477,14 @@
   .officer-header {
     border-left: none;
     border-top: 5px solid var(--primary-blue);
+  }
+
+  .officer-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
   }
 }

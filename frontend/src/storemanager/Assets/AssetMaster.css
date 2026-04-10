@@ -20,10 +20,10 @@
    =============================== */
 
 .sm-assets-header {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   min-height: 52px;
   margin-bottom: 1.2rem;
   gap: 1rem;
@@ -56,6 +56,10 @@
   font-size: 0.9rem;
   cursor: pointer;
   color: #1e3a8a;
+}
+
+.mobile-back-btn {
+  flex-shrink: 0;
 }
 
 /* ===============================
@@ -163,6 +167,7 @@
 
 .sm-assets-table {
   width: 100%;
+  min-width: 980px;
   border-collapse: collapse;
   background: white;
   border-radius: 14px;
@@ -219,7 +224,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 3000;
 }
 
 .modal-card {
@@ -405,7 +410,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 3001;
 }
 
 .preview-box {
@@ -474,4 +479,32 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+@media (max-width: 768px) {
+  .sm-assets-header h1 {
+    width: 100%;
+    order: 2;
+  }
+
+  .mobile-back-btn {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    border-radius: 12px;
+  }
+
+  .sm-assets-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
 }

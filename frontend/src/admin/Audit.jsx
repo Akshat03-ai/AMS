@@ -156,7 +156,7 @@ function Audit() {
     return (
         <div className="admin-audit-page">
             <div className="audit-header">
-                <button className="back-btn" onClick={() => navigate("/admin/dashboard")}>
+                <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
                     ← Back
                 </button>
 
@@ -244,6 +244,7 @@ function Audit() {
 
             {
                 !loading && logs.length > 0 && (
+                    <div className="table-scroll">
                     <table className="audit-table">
                         <thead>
                             <tr>
@@ -282,6 +283,7 @@ function Audit() {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 )
             }
         </div >

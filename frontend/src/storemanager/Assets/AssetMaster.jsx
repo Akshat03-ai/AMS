@@ -302,7 +302,7 @@ function AssetMaster() {
 
       {/* HEADER */}
       <div className="sm-assets-header">
-        <button className="back-btn" onClick={() => navigate("/store-manager/dashboard")}>
+        <button className="back-btn mobile-back-btn" onClick={() => navigate("/store-manager/dashboard")}>
           ← Back
         </button>
         <h1><FiBox />Assets</h1>
@@ -352,6 +352,7 @@ function AssetMaster() {
       )}
 
       {!loading && assets.length > 0 && (
+        <div className="table-scroll">
         <table className="sm-assets-table">
           <thead>
             <tr>
@@ -402,6 +403,7 @@ function AssetMaster() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {/* MODAL */}

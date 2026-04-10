@@ -29,10 +29,10 @@
    HEADER
    =============================== */
 .users-header {
-    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     min-height: 50px;
     margin-bottom: 1.5rem;
     gap: 1rem;
@@ -97,6 +97,7 @@
     display: flex;
     gap: 0.75rem;
     margin-bottom: 1.2rem;
+    flex-wrap: wrap;
 }
 
 .tabs button {
@@ -143,6 +144,8 @@
     padding: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ===============================
@@ -222,6 +225,10 @@
     align-items: center; /* 🔑 aligns all icons */
 }
 
+.actions-buttons {
+    flex-wrap: wrap;
+}
+
 .actions-buttons button {
     border: none;
     background: rgba(255, 255, 255, 0.7);
@@ -280,6 +287,15 @@
         display: none;
     }
 
+    .users-header h1 {
+        width: 100%;
+        order: 2;
+    }
+
+    .tabs button {
+        flex: 1 1 180px;
+    }
+
     .users-table tbody tr {
         display: block;
         padding: 0.75rem;
@@ -293,6 +309,12 @@
         justify-content: space-between;
         border: none;
         padding: 6px 0;
+        gap: 1rem;
+        overflow-wrap: anywhere;
+    }
+
+    .actions-buttons {
+        justify-content: flex-end;
     }
 }
 

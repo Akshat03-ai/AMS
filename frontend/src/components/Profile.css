@@ -285,18 +285,24 @@
    ========================= */
 @media (max-width: 768px) {
   .profile-container {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .profile-header {
-    flex-direction: column;
     text-align: center;
     border-left: none;
     border-top: 6px solid #2563eb;
+    padding: 1.5rem 1rem;
   }
 
   .profile-meta {
     justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .profile-meta span {
+    justify-content: center;
+    width: 100%;
   }
   .avatar-circle {
     width: 76px;
@@ -305,6 +311,21 @@
   }
   .personal-grid {
     grid-template-columns: 1fr;
+  }
+
+  .org-grid,
+  .office-grid,
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .office-email-card {
+    grid-column: span 1;
+  }
+
+  .info-card {
+    align-items: flex-start;
   }
 }
 

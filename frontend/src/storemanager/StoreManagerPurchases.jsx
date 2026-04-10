@@ -478,6 +478,7 @@ function StoreManagerPurchases() {
           {filteredPurchases.length === 0 ? (
             <div className="no-results">No purchase records found</div>
           ) : (
+            <div className="table-scroll">
             <table>
               <thead>
                 <tr>
@@ -523,6 +524,7 @@ function StoreManagerPurchases() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </>
       )}
@@ -557,6 +559,7 @@ function StoreManagerPurchases() {
           {filteredVendors.length === 0 ? (
             <div className="no-results">No vendors found</div>
           ) : (
+            <div className="table-scroll">
             <table>
               <thead>
                 <tr>
@@ -589,6 +592,7 @@ function StoreManagerPurchases() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </>
       )}

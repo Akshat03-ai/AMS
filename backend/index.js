@@ -1,11 +1,12 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
 const express = require("express");
 const cors = require("cors");
 const { admin, db } = require("./firebase");
 const authenticate = require("./middlewares/authMiddleware");
 const authorizeRole = require("./middlewares/roleMiddleware");
-const { sendAccountEmail } = require("./utils/mailer");
+const { sendAccountEmail, isMailerConfigured } = require("./utils/mailer");
 const { generateAuditId, generateAssetId } = require("./utils/idGenerator");
 
 const app = express();
@@ -204,50 +205,64 @@ app.post(
       });
 
       const uid = userRecord.uid;
-      // -----------------
-      // GENERATE RESET LINK
-      // -----------------
-      const resetLink = await admin
-        .auth()
-        .generatePasswordResetLink(email);
+      let resetLink = null;
+      let emailSent = false;
+      let emailFailureReason = null;
 
-      // -----------------
-      // CREATE USERS DOCUMENT
-      // -----------------
-      await db.collection("Users").doc(uid).set({
-        user_id,
-        name,
-        contact,
-        email,
-        designation,
-        role: assignedRole,
-        department_id,
-        office_id,
-        room_id,
-      });
-
-      // -----------------
-      // SEND EMAIL
-      // -----------------
       try {
-        await sendAccountEmail({
-          to: email,
+        // -----------------
+        // CREATE USERS DOCUMENT
+        // -----------------
+        await db.collection("Users").doc(uid).set({
+          user_id,
           name,
-          tempPassword: password,
-          resetLink,
+          contact,
+          email,
+          designation,
+          role: assignedRole,
+          department_id,
+          office_id,
+          room_id,
         });
-      } catch (mailErr) {
-        console.error("EMAIL SEND FAILED:", mailErr);
 
-        // Rollback auth user
-        await admin.auth().deleteUser(uid);
+        // -----------------
+        // GENERATE RESET LINK
+        // -----------------
+        try {
+          resetLink = await admin.auth().generatePasswordResetLink(email);
+        } catch (resetErr) {
+          emailFailureReason = "Password reset link could not be generated";
+          console.error("RESET LINK GENERATION FAILED:", resetErr);
+        }
 
-        // Rollback Firestore
-        await db.collection("Users").doc(uid).delete();
-
-        return res.status(500).json({
-          message: "User creation failed while sending email",
-        });
+        // -----------------
+        // SEND EMAIL
+        // -----------------
+        if (!isMailerConfigured) {
+          emailFailureReason = "Mailer is not configured on the server";
+        } else if (!resetLink) {
+          emailFailureReason = emailFailureReason || "Password reset link is unavailable";
+        } else {
+          try {
+            await sendAccountEmail({
+              to: email,
+              name,
+              tempPassword: password,
+              resetLink,
+            });
+            emailSent = true;
+          } catch (mailErr) {
+            emailFailureReason = "Email delivery failed";
+            console.error("EMAIL SEND FAILED:", mailErr);
+          }
+        }
+      } catch (writeErr) {
+        try {
+          await admin.auth().deleteUser(uid);
+        } catch (cleanupErr) {
+          console.error("ROLLBACK USER DELETE FAILED:", cleanupErr);
+        }
+        throw writeErr;
       }
 
       // -----------------
@@ -266,11 +281,20 @@ app.post(
           `User created by ${req.user.role} ${req.user.name}`,
       });
 
-      res.status(201).json({
-        message: "User created successfully",
+      const responsePayload = {
         uid,
         user_id,
-      });
+        message: emailSent
+          ? "User created successfully"
+          : "User created successfully, but email delivery failed. Please notify the user manually.",
+      };
+
+      if (!emailSent) {
+        responsePayload.emailWarning = true;
+        responsePayload.emailFailureReason = emailFailureReason;
+      }
+
+      res.status(201).json(responsePayload);
 
     } catch (err) {
       console.error("CREATE USER ERROR:", err);
@@ -2456,6 +2480,7 @@ app.post(
       // ==========================================
       let assigned_uid = null;
       let final_assigned_to = assigned_to;
+      let assignedUserData = null;
       try {
         let userQuery = await db
           .collection("Users")
@@ -2469,14 +2494,28 @@ app.post(
             const u = docRef.data();
             assigned_uid = docRef.id;
             final_assigned_to = u.user_id || assigned_to;
+            assignedUserData = u;
           }
         } else {
           const udoc = userQuery.docs[0];
           assigned_uid = udoc.id;
           final_assigned_to = udoc.data().user_id || assigned_to;
+          assignedUserData = udoc.data();
         }
       } catch (e) {
         console.error("Failed to resolve assigned user:", e);
+      }
+
+      if (!assigned_uid || !assignedUserData) {
+        return res.status(404).json({ message: "Officer not found" });
+      }
+
+      if (assignedUserData.role !== "officer") {
+        return res.status(400).json({ message: "Selected user is not an officer" });
+      }
+
+      if (assignedUserData.office_id !== req.user.office_id) {
+        return res.status(403).json({ message: "Officer does not belong to your office" });
       }
 
       // ==========================================
@@ -3807,12 +3846,47 @@ app.get(
     try {
 
       const officerId = req.params.officerId;
+      let officerUserId = officerId;
+      let officerUid = officerId;
 
-      const snap = await db
-        .collection("asset_assignments")
-        .where("assigned_to", "==", officerId)
-        .where("returned_date", "==", null)
+      const officerByBusinessId = await db
+        .collection("Users")
+        .where("user_id", "==", officerId)
+        .where("office_id", "==", req.user.office_id)
+        .limit(1)
         .get();
+
+      if (!officerByBusinessId.empty) {
+        officerUid = officerByBusinessId.docs[0].id;
+        officerUserId = officerByBusinessId.docs[0].data().user_id || officerId;
+      } else {
+        const officerDoc = await db.collection("Users").doc(officerId).get();
+        if (officerDoc.exists) {
+          const officerData = officerDoc.data();
+          if (officerData.office_id !== req.user.office_id) {
+            return res.status(403).json({ message: "Unauthorized officer" });
+          }
+          officerUid = officerDoc.id;
+          officerUserId = officerData.user_id || officerId;
+        }
+      }
+
+      const [snapByUserId, snapByUid] = await Promise.all([
+        db
+        .collection("asset_assignments")
+        .where("assigned_to", "==", officerUserId)
+        .where("returned_date", "==", null)
+        .get(),
+        db
+          .collection("asset_assignments")
+          .where("assigned_uid", "==", officerUid)
+          .where("returned_date", "==", null)
+          .get()
+      ]);
+
+      const assignmentDocs = new Map();
+      snapByUserId.docs.forEach((doc) => assignmentDocs.set(doc.id, doc));
+      snapByUid.docs.forEach((doc) => assignmentDocs.set(doc.id, doc));
 
       const assetSnap = await db.collection("assets").get();
 
@@ -3822,7 +3896,7 @@ app.get(
         assetMap[data.asset_id] = data;
       });
 
-      const assignments = snap.docs.map(doc => {
+      const assignments = Array.from(assignmentDocs.values()).map(doc => {
 
         const data = doc.data();
         const asset = assetMap[data.asset_id] || {};

@@ -22,7 +22,7 @@
 .home-container {
   height: 100%;
   background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
-  padding-top: 2rem;
+  overflow-x: hidden;
 }
 
 /* Stats Section */
@@ -518,7 +518,7 @@
 .hero {
   background: linear-gradient(to bottom,#131e3b 0%,#162844 100%);
   color: white;
-  padding: 4rem 2rem;
+  padding: 4.5rem 2rem 4rem;
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -536,10 +536,11 @@
 /* Logo side */
 .hero-image-wrapper {
   flex-shrink: 0;
-  margin-top: -200px;
-  margin-left: -60px;
+  margin: 0;
   align-self: center;
   perspective: 1000px;
+  display: flex;
+  justify-content: center;
 }
 
 .home-logo {
@@ -567,12 +568,14 @@
   font-size: 3rem;
   font-weight: 800;
   line-height: 1.1;
+  margin: 0;
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
   color: #e2e8f0;
   max-width: 600px;
+  margin: 0;
 }
 
 .hero-actions {
@@ -615,7 +618,8 @@
 .cta-button.outline {
   background: transparent;
   color: #93c5fd;
-  padding: 14px 0;
+  padding: 14px 18px;
+  border: 1px solid rgba(147, 197, 253, 0.4);
 }
 
 .cta-button.outline:hover {
@@ -636,6 +640,10 @@
    =============================== */
 
 @media (max-width: 900px) {
+  .hero {
+    padding: 3rem 1.25rem 2.5rem;
+  }
+
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
@@ -692,10 +700,19 @@
   .hero-content {
     flex-direction: column;
     text-align: center;
+    gap: 2rem;
   }
 
   .hero-text {
     align-items: center;
+  }
+
+  .hero-image-wrapper {
+    order: -1;
+  }
+
+  .home-logo {
+    height: 140px;
   }
 
   .hero-actions {
@@ -704,6 +721,33 @@
 
   .hero-trust-badges {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-section,
+  .features-section,
+  .roles-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-trust-badges {
+    gap: 0.85rem;
+  }
+
+  .section-title {
+    font-size: 1.7rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 }

@@ -1,14 +1,38 @@
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.SYSTEM_EMAIL,
-    pass: process.env.SYSTEM_EMAIL_PASSWORD,
-  },
-});
+const isMailerConfigured = Boolean(
+  process.env.SYSTEM_EMAIL && process.env.SYSTEM_EMAIL_PASSWORD
+);
+
+const transporter = isMailerConfigured
+  ? nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.SYSTEM_EMAIL,
+        pass: process.env.SYSTEM_EMAIL_PASSWORD,
+      },
+    })
+  : null;
+
+if (transporter) {
+  transporter.verify((error) => {
+    if (error) {
+      console.error("Mailer verification failed:", error);
+    } else {
+      console.log("Mailer is ready to send messages");
+    }
+  });
+} else {
+  console.warn("Mailer is disabled: SYSTEM_EMAIL credentials are not configured.");
+}
 
 async function sendAccountEmail({ to, name, tempPassword, resetLink }) {
+  if (!transporter) {
+    throw new Error("Mailer is not configured");
+  }
+
   await transporter.sendMail({
     from: `"Asset Management System" <${process.env.SYSTEM_EMAIL}>`,
     to,
@@ -36,4 +60,4 @@ async function sendAccountEmail({ to, name, tempPassword, resetLink }) {
   });
 }
 
-module.exports = { sendAccountEmail };
+module.exports = { sendAccountEmail, isMailerConfigured };

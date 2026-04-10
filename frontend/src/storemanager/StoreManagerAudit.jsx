@@ -147,7 +147,7 @@ function StoreManagerAudit() {
     <div className="sm-audit-page">
 
       <div className="sm-audit-header">
-        <button className="back-btn" onClick={() => navigate("/store-manager/dashboard")}>
+        <button className="back-btn mobile-back-btn" onClick={() => navigate("/store-manager/dashboard")}>
           ← Back
         </button>
         <h1><FiFileText /> Office Audit Log</h1>
@@ -178,6 +178,7 @@ function StoreManagerAudit() {
       )}
 
       {!loading && logs.length > 0 && (
+        <div className="table-scroll">
         <table className="sm-audit-table">
           <thead>
             <tr>
@@ -219,6 +220,7 @@ function StoreManagerAudit() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {showReportModal && (

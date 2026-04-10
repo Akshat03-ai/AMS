@@ -8,18 +8,25 @@
 
 /* HEADER */
 .purchase-header {
-    position: relative;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     min-height: 48px;
     margin-bottom: 1.5rem;
 }
 
 .purchase-header h1 {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
 }
 
 /* TABS */
@@ -71,8 +78,9 @@
 }
 
 /* TABLE */
-table {
+.table-scroll table {
     width: 100%;
+    min-width: 920px;
     background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
@@ -189,7 +197,7 @@ tbody tr:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 3000;
 }
 
 .purchase-modal-card {
@@ -388,6 +396,18 @@ tbody tr:hover {
     position: static;
     transform: none;
     text-align: center;
+    width: 100%;
+    order: 2;
+  }
+
+  .purchase-header .back-btn {
+    width: 100%;
+    order: 1;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    border-radius: 12px;
   }
 
   .purchase-tabs {
@@ -417,10 +437,8 @@ tbody tr:hover {
     padding: 8px 10px;
   }
 
-  table {
+  .table-scroll table {
     font-size: 0.8rem;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   th,
@@ -460,7 +478,7 @@ tbody tr:hover {
     font-size: 1.3rem;
   }
 
-  table {
+  .table-scroll table {
     font-size: 0.75rem;
   }
 
@@ -514,7 +532,7 @@ tbody tr:hover {
     font-size: 1.2rem;
   }
 
-  table {
+  .table-scroll table {
     font-size: 0.7rem;
   }
 

@@ -3,13 +3,13 @@
 ========================= */
 
 .login-container {
-  height: 100dvh;
+  height: calc(100vh - 5.15rem);
   background: linear-gradient(to bottom,#0f172a 0%,#162844 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
   overflow: hidden;
-  margin-top: -82px;
 }
 
 .login-card {
@@ -17,13 +17,11 @@
   padding: 40px;
   width: 380px;
   border-radius: 10px;
-  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  margin-top: 50px;
   backdrop-filter: blur(6px);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.05);
+  margin: auto;
 }
 
 /* =========================

@@ -130,18 +130,18 @@ function CreateUser() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // ✅ THIS WAS MISSING
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(form),
             });
 
+            const data = await res.json();
 
             if (!res.ok) {
-                const data = await res.json();
                 throw new Error(data.message || "User creation failed");
             }
 
-            setSuccess("User created successfully");
+            setSuccess(data.message || "User created successfully");
             scrollToTop();
             setForm({
                 user_id: "",

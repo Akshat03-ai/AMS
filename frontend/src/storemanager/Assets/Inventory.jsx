@@ -163,7 +163,7 @@ function Inventory() {
 
             {/* HEADER */}
             <div className="sm-assets-header">
-                <button className="back-btn" onClick={() => navigate("/store-manager/dashboard")}>
+                <button className="back-btn mobile-back-btn" onClick={() => navigate("/store-manager/dashboard")}>
                     ← Back
                 </button>
                 <h1><FiBox />Assets</h1>
@@ -209,6 +209,7 @@ function Inventory() {
             )}
 
             {!loading && inventory.length > 0 && (
+                <div className="table-scroll">
                 <table className="sm-assets-table">
                     <thead>
                         <tr>
@@ -283,6 +284,7 @@ function Inventory() {
                         ))}
                     </tbody>
                 </table>
+                </div>
             )}
 
             {/* MODAL */}

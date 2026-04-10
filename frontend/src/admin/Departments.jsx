@@ -161,7 +161,7 @@ function Departments() {
             </div>
 
             <div className="dept-header">
-                <button className="back-btn" onClick={() => navigate("/admin/dashboard")}>
+                <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
                     ← Back
                 </button>
                 <h1 className="dept-title"><HiOutlineBuildingOffice2 /> Departments</h1>
@@ -186,6 +186,7 @@ function Departments() {
             )}
 
             {!loading && departments.length > 0 && (
+                <div className="table-scroll">
                 <table className="dept-table">
                     <thead>
                         <tr>
@@ -216,6 +217,7 @@ function Departments() {
                         ))}
                     </tbody>
                 </table>
+                </div>
             )}
 
             {showForm && (

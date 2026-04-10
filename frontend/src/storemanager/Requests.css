@@ -22,6 +22,23 @@
     text-align: center;
 }
 
+.back-bttnn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.back-bttnn:hover {
+    background: #dbeafe;
+}
+
 @media (min-width: 768px) {
   .requests-header {
     flex-direction: row;
@@ -254,8 +271,9 @@
     overflow-x: auto;
 }
 
-table {
+.requests-table table {
     width: 100%;
+    min-width: 780px;
     border-collapse: collapse;
 }
 
@@ -407,9 +425,13 @@ tbody tr:hover {
     }
 
     .requests-header {
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
         gap: 1rem;
+    }
+
+    .back-bttnn {
+        justify-content: center;
+        width: 100%;
     }
 }
 
