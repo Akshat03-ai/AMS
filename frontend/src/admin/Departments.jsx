@@ -144,6 +144,13 @@ function Departments() {
     return (
         <div className="admin-departments-page">
 
+            <div className="dept-header">
+                <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
+                    ← Back
+                </button>
+                <h1 className="dept-title"><HiOutlineBuildingOffice2 /> Departments</h1>
+            </div>
+
             <div className="admin-tabs">
                 <button
                     className={location.pathname.includes("departments") ? "active" : ""}
@@ -158,13 +165,6 @@ function Departments() {
                 >
                     Offices
                 </button>
-            </div>
-
-            <div className="dept-header">
-                <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
-                    ← Back
-                </button>
-                <h1 className="dept-title"><HiOutlineBuildingOffice2 /> Departments</h1>
             </div>
 
             <div className="dept-controls">
@@ -187,36 +187,36 @@ function Departments() {
 
             {!loading && departments.length > 0 && (
                 <div className="table-scroll">
-                <table className="dept-table">
-                    <thead>
-                        <tr>
-                            <th>Department ID</th>
-                            <th>Department Name</th>
-                            <th>Department Type</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {departments.map((d) => (
-                            <tr key={d.id}>
-                                <td>{d.department_id}</td>
-                                <td>{d.department_name}</td>
-                                <td>{d.department_type}</td>
-                                <td className="actions">
-                                    <button onClick={() => openEdit(d)}>
-                                        <FiEdit />
-                                    </button>
-                                    <button
-                                        className="danger"
-                                        onClick={() => handleDelete(d)}
-                                    >
-                                        <FiTrash2 />
-                                    </button>
-                                </td>
+                    <table className="dept-table">
+                        <thead>
+                            <tr>
+                                <th>Department ID</th>
+                                <th>Department Name</th>
+                                <th>Department Type</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {departments.map((d) => (
+                                <tr key={d.id}>
+                                    <td>{d.department_id}</td>
+                                    <td>{d.department_name}</td>
+                                    <td>{d.department_type}</td>
+                                    <td className="actions">
+                                        <button onClick={() => openEdit(d)}>
+                                            <FiEdit />
+                                        </button>
+                                        <button
+                                            className="danger"
+                                            onClick={() => handleDelete(d)}
+                                        >
+                                            <FiTrash2 />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
 

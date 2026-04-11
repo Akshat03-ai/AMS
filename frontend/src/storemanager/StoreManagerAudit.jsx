@@ -178,7 +178,7 @@ function StoreManagerAudit() {
       )}
 
       {!loading && logs.length > 0 && (
-        <div className="table-scroll">
+        <div className="sm-table-scroll">
         <table className="sm-audit-table">
           <thead>
             <tr>

@@ -355,7 +355,7 @@ function Requests() {
             <div className="requests-header">
 
                 <button
-                    className="back-bttnn"
+                    className="back-btn"
                     onClick={() =>
                         activeTab
                             ? setActiveTab(null)

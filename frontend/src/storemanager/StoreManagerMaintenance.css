@@ -1,184 +1,187 @@
 /* PAGE WRAPPER */
 .maintenance-wrapper {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem 3rem;
-    min-height: 60vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  min-height: 60vh;
 }
 
 /* HEADER */
 .maintenance-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    min-height: 48px;
-    margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  min-height: 48px;
+  margin-bottom: 1.5rem;
 }
 
 .maintenance-header h1 {
-    margin: 0;
-    flex: 1;
-    text-align: center;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* TABS */
 .maintenance-tabs {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin: 1rem 0 1.5rem;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 1rem 0 1.5rem;
 }
 
 .maintenance-tabs button {
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    cursor: pointer;
-    font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 .maintenance-tabs button.active {
-    background: #1e3a8a;
-    color: white;
-    border-color: #1e3a8a;
+  background: #1e3a8a;
+  color: white;
+  border-color: #1e3a8a;
 }
 
 /* CONTENT */
 .maintenance-content {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 /* TABLE HEADER */
 .table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1.5rem 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0 1rem;
 }
 
 .table-container {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 12px;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
 }
 
 /* BUTTONS */
 .primary-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #1d4ed8;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .primary-btn:hover {
-    background: #1e3a8a;
+  background: #1e3a8a;
 }
 
 .full-width {
-    width: 100%;
-    justify-content: center;
+  width: 100%;
+  justify-content: center;
 }
 
 /* TABLE */
 table {
-    width: 100%;
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-    border-collapse: collapse;
-    box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border-collapse: collapse;
+  box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
 }
 
 thead th {
-    position: sticky;
-    top: 0;
-    background: #f9fafb;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: #374151;
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #374151;
 }
 
 th,
 td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
 }
 
 tbody tr:hover {
-    background: #e8f1fb;
+  background: #e8f1fb;
 }
 
 .table-container table {
-    min-width: 920px;
+  min-width: 920px;
 }
 
 .empty-row {
-    padding: 1.5rem;
-    text-align: center;
-    color: #6b7280;
+  padding: 1.5rem;
+  text-align: center;
+  color: #6b7280;
 }
 
 /* MODAL */
 .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
 }
 
 .modal-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 14px;
-    width: 420px;
-    max-width: 90%;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 14px;
+  width: 420px;
+  max-width: 90%;
 }
 
 .modal-card h3 {
-    margin-bottom: 0.8rem;
-    font-weight: 700;
-    color: #1e3a8a;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  color: #1e3a8a;
 }
 
 .modal-card input,
 .modal-card select,
 .modal-card textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    font-size: 0.9rem;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  box-sizing: border-box;
 }
 
 .modal-card input:focus,
 .modal-card select:focus,
 .modal-card textarea:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 1.2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.2rem;
 }
 
 /* ACTION ICONS (Edit / Delete) */
@@ -255,7 +258,7 @@ tbody tr:hover {
 
 .status-badge:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* ================= RESPONSIVE DESIGN ================= */

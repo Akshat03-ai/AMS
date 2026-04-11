@@ -50,10 +50,9 @@
 }
 
 .audit-header h1 {
-  position: static;
-  transform: none;
-  top: auto;
-  left: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -147,7 +146,8 @@
   gap: 20px;
 }
 
-.primary-button, .secondary-button {
+.primary-button,
+.secondary-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -160,7 +160,7 @@
 }
 
 .primary-button {
-  background: #ef4444; 
+  background: #ef4444;
   color: white;
 }
 
@@ -179,7 +179,8 @@
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
-.primary-button:active, .secondary-button:active {
+.primary-button:active,
+.secondary-button:active {
   transform: translateY(1px);
 }
 

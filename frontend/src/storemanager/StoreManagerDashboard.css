@@ -1,13 +1,20 @@
 :root {
   /* Store Manager Palette */
-  --sm-blue: #1e3a8a;       /* Deep Navy */
-  --sm-blue-light: #3b82f6; /* Bright Action Blue */
-  --sm-bg: #f3f4f6;         /* Page Background */
-  --sm-card: #ffffff;       /* Card Background */
-  --sm-border: #e5e7eb;     /* Borders */
-  --sm-text: #111827;       /* Main Text */
-  --sm-muted: #6b7280;      /* Secondary Text */
-  --sm-shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --sm-blue: #1e3a8a;
+  /* Deep Navy */
+  --sm-blue-light: #3b82f6;
+  /* Bright Action Blue */
+  --sm-bg: #f3f4f6;
+  /* Page Background */
+  --sm-card: #ffffff;
+  /* Card Background */
+  --sm-border: #e5e7eb;
+  /* Borders */
+  --sm-text: #111827;
+  /* Main Text */
+  --sm-muted: #6b7280;
+  /* Secondary Text */
+  --sm-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   --sm-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --sm-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --primary-blue: #2563eb;
@@ -17,7 +24,7 @@
 .sm-dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem; 
+  padding: 1rem;
   height: 100%;
   background: var(--sm-bg);
   font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
@@ -48,27 +55,31 @@
 @media (min-width: 768px) {
   .sm-header-content {
     flex-direction: row;
-    text-align: left;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     gap: 2rem;
   }
 }
 
 .badge-designation {
-  background-color: #eff6ff; /* Light Blue */
+  background-color: #eff6ff;
+  /* Light Blue */
   color: var(--primary-blue);
   border: 1px solid #bfdbfe;
 }
 
 .badge-id {
-  background-color: #fffbeb; /* Light Gold */
+  background-color: #fffbeb;
+  /* Light Gold */
   color: var(--accent-gold);
   border: 1px solid #fde68a;
   font-family: monospace;
 }
 
 .badge-email {
-  background-color: #e1fbe7; /* Light Green */
+  background-color: #e1fbe7;
+  /* Light Green */
   color: #178e27;
   border: 1px solid #07a91d;
   font-family: monospace;
@@ -123,8 +134,8 @@
 @media (min-width: 768px) {
   .sm-header {
     flex-direction: row;
-    justify-content: flex-start;
-    text-align: left;
+    justify-content: center;
+    text-align: center;
     border-left: 5px solid var(--sm-blue);
     border-top: none;
     padding: 2rem;
@@ -174,7 +185,7 @@
 
 
 .sm-card {
-  background: var(--sm-card); 
+  background: var(--sm-card);
   border: 1px solid var(--sm-border);
   border-radius: 16px;
   padding: 1.8rem;
@@ -260,7 +271,8 @@
 }
 
 .dashboard-error svg {
-  color: #ef4444; /* Red for error */
+  color: #ef4444;
+  /* Red for error */
   margin-bottom: 1rem;
   font-size: 3rem;
 }
@@ -276,7 +288,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* =========================
@@ -303,7 +317,7 @@
     gap: 1rem;
     padding: 1.5rem;
   }
-  
+
   .sm-meta {
     justify-content: center;
     gap: 1rem;
@@ -395,10 +409,10 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: #ffffff;
   border-radius: 12px;
   padding: 1.75rem;
-  box-shadow: 
+  box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06),
     0 0 0 1px rgba(0, 0, 0, 0.02);
@@ -412,7 +426,7 @@
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 
+  box-shadow:
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05),
     0 0 0 1px rgba(0, 0, 0, 0.02);
@@ -457,7 +471,7 @@
 }
 
 .stat-card p {
-  color: #64748b;
+  color: #6b7280;
   font-size: 0.9rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -470,39 +484,19 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .stat-card {
     padding: 1.25rem;
   }
-  
+
   .stat-card h2 {
     font-size: 2rem;
   }
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 768px) {
   .stat-card {
-    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-    box-shadow:
-      0 12px 24px rgba(2, 6, 23, 0.35),
-      0 0 0 1px rgba(148, 163, 184, 0.08);
-  }
-
-  .stat-card h2 {
-    background: linear-gradient(135deg, #f8fafc, #cbd5e1);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .stat-card p {
-    color: #cbd5e1;
-  }
-
-  @media (max-width: 768px) {
-    .stat-card {
-      text-align: center;
-      align-items: center;
-    }
+    text-align: center;
+    align-items: center;
   }
 }

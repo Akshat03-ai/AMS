@@ -27,6 +27,9 @@
 }
 
 .myassets-header h1 {
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
     flex: 1;
     text-align: center;
     font-size: 1.75rem;
@@ -150,7 +153,7 @@
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-    display: block;
+    display: table;
 }
 
 .table-scroll .myassets-table {
@@ -159,7 +162,7 @@
 
 .myassets-table th,
 .myassets-table td {
-    padding: 1rem;
+    padding: 1.25rem;
     text-align: center;
     border-bottom: 1px solid #f1f5f9;
     vertical-align: middle;

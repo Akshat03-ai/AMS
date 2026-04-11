@@ -22,23 +22,6 @@
     text-align: center;
 }
 
-.back-bttnn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.7rem 1rem;
-    border: 1px solid #bfdbfe;
-    border-radius: 12px;
-    background: #eff6ff;
-    color: #1e3a8a;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.back-bttnn:hover {
-    background: #dbeafe;
-}
-
 @media (min-width: 768px) {
   .requests-header {
     flex-direction: row;
@@ -128,9 +111,12 @@
 
 @media (min-width: 768px) {
     .selection-screen {
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 1150px;
+        gap: 5.5rem;
         margin-top: 4rem;
+        margin-left: 4rem;
+        margin-bottom: 2rem;
     }
 }
 

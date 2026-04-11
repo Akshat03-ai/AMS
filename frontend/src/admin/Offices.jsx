@@ -153,6 +153,14 @@ function Offices() {
   return (
     <div className="admin-offices-page">
 
+      <div className="offices-header">
+        <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
+          ← Back
+        </button>
+
+        <h1 className="office-title"><HiOutlineOfficeBuilding /> Offices</h1>
+      </div>
+
       <div className="admin-tabs">
         <button
           className={location.pathname.includes("departments") ? "active" : ""}
@@ -165,14 +173,6 @@ function Offices() {
         >
           Offices
         </button>
-      </div>
-
-      <div className="offices-header">
-        <button className="back-btn mobile-back-btn" onClick={() => navigate("/admin/dashboard")}>
-          ← Back
-        </button>
-
-        <h1 className="office-title"><HiOutlineOfficeBuilding /> Offices</h1>
       </div>
 
       {/* Controls */}
@@ -206,43 +206,43 @@ function Offices() {
 
       {!loading && offices.length > 0 && (
         <div className="table-scroll">
-        <table className="office-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Department</th>
-              <th>HOD</th>
-              <th>Email</th>
-              <th>Contact</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {offices.map((o) => {
-              const deptName = departmentMap[o.department_id]?.department_name || departmentMap[o.department_id]?.name || o.department_id || "-";
-
-              return(
-              <tr key={o.id}>
-                <td>{o.office_id}</td>
-                <td>{o.office_name}</td>
-                <td>{o.address}</td>
-                <td>{deptName}</td>
-                <td>{o.HOD}</td>
-                <td>{o.office_email}</td>
-                <td>{o.office_contact}</td>
-                <td className="actions">
-                  <button onClick={() => openEdit(o)}><FiEdit /></button>
-                  <button className="danger" onClick={() => handleDelete(o)}>
-                    <FiTrash2 />
-                  </button>
-                </td>
+          <table className="office-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Department</th>
+                <th>HOD</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Actions</th>
               </tr>
-              );
-            })}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {offices.map((o) => {
+                const deptName = departmentMap[o.department_id]?.department_name || departmentMap[o.department_id]?.name || o.department_id || "-";
+
+                return (
+                  <tr key={o.id}>
+                    <td>{o.office_id}</td>
+                    <td>{o.office_name}</td>
+                    <td>{o.address}</td>
+                    <td>{deptName}</td>
+                    <td>{o.HOD}</td>
+                    <td>{o.office_email}</td>
+                    <td>{o.office_contact}</td>
+                    <td className="actions">
+                      <button onClick={() => openEdit(o)}><FiEdit /></button>
+                      <button className="danger" onClick={() => handleDelete(o)}>
+                        <FiTrash2 />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 

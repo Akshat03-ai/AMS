@@ -14,30 +14,32 @@
    =============================== */
 
 .sm-audit-header {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   min-height: 48px;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .sm-audit-header h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0;
   font-size: 1.7rem;
   font-weight: 700;
   color: #000000;
-  flex: 1;
-  text-align: center;
+  margin: 0;
 }
 
-.table-scroll {
+.back-btn {
+  z-index: 1;
+}
+
+.sm-table-scroll {
   width: 100%;
-  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border-radius: 12px;
 }
@@ -95,27 +97,38 @@
 .sm-audit-table {
   width: 100%;
   min-width: 980px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: #ffffff;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
+  overflow: visible;
 }
 
 .sm-audit-table thead th {
+  position: -webkit-sticky; 
+  position: sticky;
+  top: 75px;
+  z-index: 20; 
   background: #f9fafb;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: #374151;
+  box-shadow: inset 0 -1px 0 #e5e7eb; 
+  vertical-align: middle;
+  align-items: center;
 }
 
 .sm-audit-table th,
 .sm-audit-table td {
   padding: 12px 10px;
-  border-bottom: 1px solid #e5e7eb;
   text-align: center;
+}
+
+.sm-audit-table td {
+  border-bottom: 1px solid #e5e7eb; 
 }
 
 .sm-audit-table td:last-child {
@@ -279,13 +292,6 @@
   .sm-audit-table td {
     padding: 6px 4px;
     white-space: nowrap;
-  }
-
-  .sm-audit-table th {
-    position: sticky;
-    left: 0;
-    background: #f9fafb;
-    z-index: 10;
   }
 
   .sm-modal-card {

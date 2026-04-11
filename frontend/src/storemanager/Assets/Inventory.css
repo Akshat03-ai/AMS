@@ -3,9 +3,9 @@
    =============================== */
 
 .sm-inventory-page {
-  max-width: 1400px;
+  max-width: 1450px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 2rem 2rem 3rem;
   min-height: 100vh;
 }
 
@@ -18,7 +18,8 @@
 
 .sm-assets-table {
   width: 100%;
-  min-width: 860px;
+  min-width: 1200px;
+  max-width: none;
   border-collapse: collapse;
   background: white;
   border-radius: 14px;
@@ -28,9 +29,10 @@
 
 .sm-assets-table th,
 .sm-assets-table td {
-  padding: 14px 12px;
+  padding: 20px 18px;
   border-bottom: 1px solid #e5e7eb;
-  text-align: left;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .sm-assets-table thead th {
@@ -40,6 +42,7 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #334155;
+  text-align: center;
 }
 
 .sm-assets-table tbody tr:hover {
@@ -99,7 +102,7 @@
 .action-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
   gap: 6px;
   min-width: 76px;
   padding: 6px 12px;
@@ -108,13 +111,26 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-right: 6px;
+  margin: 0 3px;
 }
 
-.edit-btn { background: #2563eb; color: white; }
-.edit-btn:hover { background: #1d4ed8; }
-.delete-btn { background: #ef4444; color: white; }
-.delete-btn:hover { background: #dc2626; }
+.edit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #1d4ed8;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
 
 
 /* ===============================
