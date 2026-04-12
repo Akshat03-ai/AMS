@@ -3,16 +3,11 @@
 ======================================== */
 
 .assignment-wrapper {
+  position: relative;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1rem;
   min-height: 100vh;
-}
-
-@media (min-width: 768px) {
-  .assignment-wrapper {
-    padding: 1.5rem 1rem 3rem;
-  }
 }
 
 /* ========================================
@@ -41,10 +36,22 @@
   margin: 0;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .assignment-header {
-    flex-direction: row;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .assignment-header h1 {
+    position: static;
+    transform: none;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    order: 2;
+    font-size: 3rem;
   }
 }
 
@@ -147,20 +154,24 @@
 .assignment-table {
   width: 100%;
   min-width: 1100px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: #ffffff;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 8px 24px rgba(31, 38, 135, 0.08);
 }
 
-.table-scroll {
-  width: 100%;
+.assignment-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .assignment-table thead th {
   position: sticky;
   top: 0;
+  z-index: 20;
   background: #f9fafb;
   font-size: 0.8rem;
   font-weight: 700;
@@ -448,12 +459,6 @@
     padding: 0.75rem;
   }
 
-  .assignment-header h1 {
-    font-size: 1.5rem;
-    width: 100%;
-    order: 2;
-  }
-
   .mobile-back-btn {
     order: 1;
     width: 100%;
@@ -462,6 +467,7 @@
     border: 1px solid #bfdbfe;
     background: #eff6ff;
     border-radius: 12px;
+    text-align: center;
   }
 
   .assignment-controls {
@@ -584,27 +590,46 @@
   }
 
   .assignment-header h1 {
-    font-size: 1.2rem;
+    font-size: 2rem;
   }
 
   .assignment-table {
-    font-size: 0.7rem;
+    font-size: 1rem;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 
   .assignment-table th,
   .assignment-table td {
-    padding: 3px 2px;
+    padding: 22px 18px;
+  }
+
+  .assignment-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #f9fafb;
+  }
+
+  .assignment-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
   }
 
   .assignment-controls input,
   .assignment-controls select {
-    font-size: 0.8rem;
-    padding: 6px 8px;
+    font-size: 0.85rem;
+    padding: 8px 10px;
   }
 
   .assignment-controls button {
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
   .assignment-modal-card {

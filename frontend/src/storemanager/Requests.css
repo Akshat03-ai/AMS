@@ -13,6 +13,12 @@
     }
 }
 
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+}
+
 .requests-header {
     display: flex;
     flex-direction: column;
@@ -23,11 +29,11 @@
 }
 
 @media (min-width: 768px) {
-  .requests-header {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
+    .requests-header {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
 }
 
 .requests-header h1 {
@@ -117,6 +123,12 @@
         margin-top: 4rem;
         margin-left: 4rem;
         margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    * {
+        box-sizing: border-box;
     }
 }
 
@@ -396,14 +408,10 @@ tbody tr:hover {
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .selection-screen {
         flex-direction: column;
         align-items: center;
-    }
-
-    .selection-card {
-        max-width: 100%;
     }
 
     .requests-controls {
@@ -418,6 +426,37 @@ tbody tr:hover {
     .back-bttnn {
         justify-content: center;
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .selection-card {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .selection-card h2 {
+        font-size: 1rem;
+    }
+
+    .count-badge {
+        font-size: 0.85rem;
+        padding: 3px 10px;
+    }
+
+    .selection-card p {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .enter-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
     }
 }
 

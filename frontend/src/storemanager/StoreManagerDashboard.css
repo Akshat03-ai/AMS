@@ -500,3 +500,16 @@
     align-items: center;
   }
 }
+
+@media (max-width: 480px) {
+  .sm-card {
+    padding: 1.25rem;
+  }
+
+  .sm-card>svg {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 8px !important;
+  }
+}

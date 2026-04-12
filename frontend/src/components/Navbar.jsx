@@ -100,7 +100,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="logo-link"> 
+      <Link to="/" className="logo-link">
         <div className="logo">
           <img
             src="/images/logo.png"
@@ -177,7 +177,10 @@ const Navbar = () => {
         {!firebaseUser ? (
           <li className="nav-item">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                setIsMenuOpen(false);
+                navigate("/login");
+              }}
               className="login-btn"
               type="button"
             >
@@ -188,7 +191,10 @@ const Navbar = () => {
         ) : (
           <li className="nav-item">
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                setIsMenuOpen(false);
+                handleLogout();
+              }}
               className="logout-btn"
               type="button"
             >

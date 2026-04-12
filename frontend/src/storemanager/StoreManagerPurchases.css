@@ -532,7 +532,8 @@ tbody tr:hover {
   }
 
   .purchase-header h1 {
-    font-size: 1.2rem;
+    font-size: 2rem;
+    padding-top: 1.5rem;
   }
 
   .table-scroll table {
@@ -545,21 +546,21 @@ tbody tr:hover {
   }
 
   .purchase-tabs {
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .purchase-tabs button {
     flex-shrink: 0;
-    padding: 5px 10px;
+    padding: 8px 10px;
     font-size: 0.8rem;
   }
 
   .purchase-controls input,
   .purchase-controls select {
     font-size: 0.8rem;
-    padding: 6px 8px;
+    padding: 8px 8px;
   }
 
   .purchase-modal-card {

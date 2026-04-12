@@ -516,12 +516,12 @@
 }
 
 .hero {
-  background: linear-gradient(to bottom,#131e3b 0%,#162844 100%);
+  background: linear-gradient(to bottom, #131e3b 0%, #162844 100%);
   color: white;
-  padding: 4.5rem 2rem 4rem;
+  padding: 5rem 2rem 6rem;
   display: flex;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hero-content {
@@ -531,7 +531,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 4.5rem;
-  height: 450px;
 }
 
 /* Logo side */
@@ -554,8 +553,7 @@
 .hero-image-wrapper:hover .home-logo {
   transform: scale(1.1);
   filter:
-    drop-shadow(0 0 20px rgba(64, 144, 201, 0.45))
-    drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+    drop-shadow(0 0 20px rgba(64, 144, 201, 0.45)) drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
 }
 
 .hero-text {
@@ -647,11 +645,29 @@
 
   .hero-actions {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   .cta-button {
+    width: 90%;
+    max-width: 200px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .hero-visual {
+    order: 2;
     width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-img {
+    width: 100%;
+    max-width: 320px;
   }
 }
 
@@ -680,7 +696,7 @@
 .hero-visual:hover .hero-img {
   transform: scale(1.04);
   box-shadow: 0 35px 70px rgba(0, 0, 0, 0.4);
-} 
+}
 
 .hero-trust-badges {
   display: flex;
@@ -701,7 +717,7 @@
   .hero-content {
     flex-direction: column;
     text-align: center;
-    gap: 2rem;
+    gap: 2.5rem;
   }
 
   .hero-text {
@@ -727,6 +743,7 @@
 }
 
 @media (max-width: 640px) {
+
   .stats-section,
   .features-section,
   .roles-section {

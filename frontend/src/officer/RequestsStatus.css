@@ -62,7 +62,7 @@
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    
+
     /* Inheriting the glassmorphism card style from reference */
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
@@ -224,7 +224,7 @@
     font-size: 1.1rem;
     color: #6b7280;
     font-weight: 500;
-    
+
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
     border-radius: 18px;
@@ -237,9 +237,19 @@
 ================================= */
 @media (max-width: 768px) {
     .requests-header {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+    }
+
+    .requests-header h1 {
+        position: static;
+        justify-content: center;
+        transform: none;
+        width: 100%;
+        text-align: center;
     }
 
     .requests-controls {
@@ -256,6 +266,18 @@
         width: 100%;
         flex-direction: column;
         align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .filters select {
+        height: 40px !important;
+        padding: 0 10px !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px;
+    }
+
+    .filters svg {
+        font-size: 1rem;
     }
 
     .requests-table {
@@ -263,23 +285,23 @@
     }
 }
 
-.details-btn{
-  padding:4px 10px;
-  border:none;
-  background:#24548F;
-  color:white;
-  border-radius:5px;
-  cursor:pointer;
+.details-btn {
+    padding: 4px 10px;
+    border: none;
+    background: #24548F;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-.details-row{
-  background:#fafafa;
+.details-row {
+    background: #fafafa;
 }
 
-.request-details{
-  padding:12px 6px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  font-size:14px;
+.request-details {
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
 }

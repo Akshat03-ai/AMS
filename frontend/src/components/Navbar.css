@@ -167,6 +167,7 @@
     width: 0;
     opacity: 0;
   }
+
   to {
     width: 20px;
     opacity: 1;
@@ -210,7 +211,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  min-height: 44px; /* Better touch target */
+  min-height: 44px;
+  /* Better touch target */
   white-space: nowrap;
 }
 
@@ -344,8 +346,8 @@
     margin-top: 0.75rem;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.4rem;
-    padding: 0.75rem;
+    gap: 0.8rem;
+    padding: 1.25rem;
     border-radius: 14px;
     background: rgba(15, 23, 42, 0.98);
     box-shadow: 0 12px 28px rgba(2, 6, 23, 0.3);
@@ -360,23 +362,19 @@
   .login-btn,
   .logout-btn {
     width: 100%;
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    font-size: 2rem;
   }
-  
+
   .logo-text {
     font-size: 1.2rem;
   }
-  
+
   .logo-img {
     height: 45px;
   }
-  
-  .nav-item a,
-  .login-btn,
-  .logout-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.95rem;
-  }
-  
+
   .icon {
     font-size: 1.1rem;
   }
@@ -388,7 +386,7 @@
     padding: 0.75rem 1rem;
     gap: 0.5rem;
   }
-  
+
   .nav-item a,
   .login-btn,
   .logout-btn {
@@ -397,15 +395,15 @@
     border-radius: 10px;
     justify-content: flex-start;
   }
-  
+
   .icon {
     font-size: 1rem;
   }
-  
+
   .logo-img {
     height: 40px;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
@@ -417,26 +415,31 @@
     padding: 0.75rem;
     min-height: 68px;
   }
-  
+
+  .nav-links {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
   .nav-item a,
   .login-btn,
   .logout-btn {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.9rem;
   }
-  
+
   .icon {
     font-size: 0.95rem;
   }
-  
+
   .logo-img {
     height: 35px;
   }
-  
+
   .logo-text {
     font-size: 1rem;
   }
-  
+
   .nav-text {
     font-size: 0.8rem;
   }
@@ -449,7 +452,7 @@
     gap: 0.75rem;
     padding: 0.75rem;
   }
-  
+
   .nav-links {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -458,36 +461,36 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
+
   .nav-links::-webkit-scrollbar {
     display: none;
   }
-  
+
   .nav-item {
     flex-shrink: 0;
   }
-  
+
   .nav-item a,
   .login-btn,
   .logout-btn {
     padding: 0.4rem 0.8rem;
     min-height: 40px;
   }
-  
+
   .nav-text {
     display: none;
   }
-  
+
   .icon {
     font-size: 1.1rem;
     margin: 0;
   }
-  
+
   .logo {
     justify-content: center;
     width: 100%;
   }
-  
+
   .logo-text {
     font-size: 1.2rem;
   }
@@ -498,15 +501,15 @@
   .navbar {
     background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
   }
-  
+
   .nav-item a {
     color: #cbd5e1;
   }
-  
+
   .nav-item a:hover {
     color: #ffffff;
   }
-  
+
   .nav-item a.active {
     background: rgba(56, 189, 248, 0.15);
   }
@@ -517,7 +520,7 @@
   .nav-item a.active {
     outline: 2px solid #38bdf8;
   }
-  
+
   .logout-btn,
   .login-btn {
     border: 2px solid white;
@@ -526,6 +529,7 @@
 
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
+
   .navbar,
   .logo,
   .logo-img,
@@ -536,7 +540,7 @@
   .icon {
     transition: none;
   }
-  
+
   .logo:hover,
   .logo:hover .logo-img,
   .logo:hover .logo-text,
@@ -545,7 +549,7 @@
   .login-btn:hover {
     transform: none;
   }
-  
+
   .loading-spinner {
     animation-duration: 2s;
   }
@@ -559,12 +563,12 @@
     box-shadow: none !important;
     border-bottom: 1px solid #ccc;
   }
-  
+
   .logout-btn,
   .login-btn {
     display: none !important;
   }
-  
+
   .logo-text {
     background: none !important;
     -webkit-text-fill-color: black !important;

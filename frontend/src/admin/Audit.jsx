@@ -244,8 +244,8 @@ function Audit() {
 
             {
                 !loading && logs.length > 0 && (
-                    <div className="table-scroll">
-                    <table className="audit-table">
+                    <div className="sm-table-scroll">
+                    <table className="sm-audit-table">
                         <thead>
                             <tr>
                                 <th>Log ID</th>

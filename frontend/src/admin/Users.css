@@ -48,13 +48,13 @@
 }
 
 .no-results {
-  padding: 1.5rem;
-  text-align: center;
-  color: #6b7280;
-  font-size: 0.95rem;
-  background: #f9fafb;
-  border-radius: 10px;
-  margin-top: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.95rem;
+    background: #f9fafb;
+    border-radius: 10px;
+    margin-top: 1rem;
 }
 
 /* ===============================
@@ -62,32 +62,47 @@
    =============================== */
 
 .users-controls {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-  margin: 1rem 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+@media (max-width: 480px) {
+    .users-header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .users-header h1 {
+        position: static;
+        transform: none;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
 @media (min-width: 768px) {
-  .users-controls {
-    grid-template-columns: 1fr auto auto;
-    gap: 1rem;
-  }
+    .users-controls {
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+    }
 }
 
 .users-controls input {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 0.9rem;
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
 }
 
 .users-controls select {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 0.9rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
 }
 
 /* ===============================
@@ -223,7 +238,8 @@
     display: flex;
     gap: 8px;
     justify-content: center;
-    align-items: center; /* 🔑 aligns all icons */
+    align-items: center;
+    /* 🔑 aligns all icons */
 }
 
 .actions-buttons {
@@ -284,8 +300,12 @@
    =============================== */
 
 @media (max-width: 768px) {
+    .users-table {
+        min-width: 1000px;
+    }
+
     .users-table thead {
-        display: none;
+        display: table-header-group;
     }
 
     .users-header h1 {
@@ -298,24 +318,16 @@
     }
 
     .users-table tbody tr {
-        display: block;
-        padding: 0.75rem;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        margin-bottom: 1rem;
+        display: table-row;
     }
 
     .users-table tbody td {
-        display: flex;
-        justify-content: space-between;
-        border: none;
-        padding: 6px 0;
-        gap: 1rem;
-        overflow-wrap: anywhere;
+        display: table-cell;
+        padding: 15px;
+        text-align: center;
     }
 
     .actions-buttons {
         justify-content: flex-end;
     }
 }
-

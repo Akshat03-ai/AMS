@@ -414,7 +414,8 @@ tbody tr:hover {
   }
 
   .maintenance-header h1 {
-    font-size: 1.2rem;
+    font-size: 2rem;
+    padding-top: 1.5rem;  
   }
 
   .table-container table {
@@ -427,7 +428,7 @@ tbody tr:hover {
   }
 
   .maintenance-tabs {
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }

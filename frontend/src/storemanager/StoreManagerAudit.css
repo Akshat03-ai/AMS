@@ -106,17 +106,17 @@
 }
 
 .sm-audit-table thead th {
-  position: -webkit-sticky; 
+  position: -webkit-sticky;
   position: sticky;
   top: 75px;
-  z-index: 20; 
+  z-index: 20;
   background: #f9fafb;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: #374151;
-  box-shadow: inset 0 -1px 0 #e5e7eb; 
+  box-shadow: inset 0 -1px 0 #e5e7eb;
   vertical-align: middle;
   align-items: center;
 }
@@ -128,7 +128,7 @@
 }
 
 .sm-audit-table td {
-  border-bottom: 1px solid #e5e7eb; 
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .sm-audit-table td:last-child {
@@ -338,8 +338,48 @@
     padding: 0.25rem;
   }
 
+  .sm-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 100vh;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+  }
+
+  .sm-audit-table thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    z-index: 20;
+    background: #f9fafb;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #374151;
+    box-shadow: inset 0 -1px 0 #e5e7eb;
+  }
+
+  .sm-audit-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
   .sm-audit-header h1 {
-    font-size: 1.2rem;
+    position: static;
+    transform: none;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+
+  .mobile-back-btn {
+    width: 100%;
+    text-align: center;
   }
 
   .sm-audit-table {
@@ -352,13 +392,16 @@
   }
 
   .sm-audit-controls input {
-    font-size: 0.8rem;
-    padding: 6px 8px;
+    font-size: 0.9rem;
+    padding: 8px 8px;
   }
 
   .sm-report-btn {
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    width: fit-content;
+    align-self: center;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    border-radius: 10px;
   }
 
   .sm-modal-card {

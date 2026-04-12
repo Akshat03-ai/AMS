@@ -213,17 +213,41 @@
 ================================= */
 @media (max-width: 768px) {
     .create-request-header {
+        display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+
+    .request-header-left,
+    .request-header-right {
+        padding-bottom: 15px;
+        width: 100%;
+    }
+
+    .request-header-left {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .request-header-right {
+        position: absolute;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        pointer-events: none;
     }
 
     .request-header-center {
         position: static;
         transform: none;
+        text-align: center;
+        padding-bottom: 10px;
     }
 
     .request-submit-btn {
-        width: 100%;
+        pointer-events: auto;
     }
 }
 

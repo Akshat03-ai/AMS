@@ -329,6 +329,34 @@
 }
 
 @media (max-width: 640px) {
+
+  .users-controls,
+  .office-controls,
+  .dept-controls {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* INPUT */
+  .users-controls input,
+  .office-controls input,
+  .dept-controls input,
+  .office-controls select {
+    height: 46px;
+    padding: 0 14px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  /* BUTTON */
+  .primary-btn,
+  .tab-create {
+    height: 46px;
+    width: 100%;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
   .admin-departments-page {
     padding: 0.5rem;
   }
@@ -377,12 +405,48 @@
 }
 
 @media (max-width: 480px) {
+  .admin-tabs button {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .primary-btn {
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+  }
+
+  .users-controls,
+  .office-controls,
+  .dept-controls {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* INPUT */
+  .users-controls input,
+  .office-controls input,
+  .dept-controls input,
+  .office-controls select {
+    height: 26px;
+    padding: 0 14px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  /* BUTTON */
+  .primary-btn,
+  .tab-create {
+    height: 40px;
+    width: 100%;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
   .admin-departments-page {
-    padding: 0.25rem;
+    padding: 0.3rem;
   }
 
   .dept-header .dept-title {
-    font-size: 1.2rem;
+    justify-content: center;
+    font-size: 2rem;
   }
 
   .dept-table {
@@ -395,15 +459,20 @@
   }
 
   .admin-tabs {
-    justify-content: flex-start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
   }
 
   .admin-tabs button {
-    flex-shrink: 0;
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    min-width: 120px;
+    border-radius: 999px;
   }
 
   .dept-controls input {

@@ -260,6 +260,12 @@
   font-size: 0.9rem;
 }
 
+.retention-table td,
+.retention-table th {
+  word-break: break-word;
+  white-space: normal;
+}
+
 .retention-table thead {
   background: #0369a1;
   color: white;
