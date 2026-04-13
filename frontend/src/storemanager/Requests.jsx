@@ -290,7 +290,6 @@ function Requests() {
                             <div className="request-details">
                                 <p><strong>Requested By:</strong> {req.officer_name || "Unknown"} (ID: {req.requested_by})</p>
                                 <p><strong>Room:</strong> {req.room_id || "N/A"}</p>
-                                <hr style={{ margin: "10px 0", border: "none", borderTop: "1px solid #eee" }} />
 
                                 {req.serial_numbers && req.serial_numbers.length > 0 && (
                                     <p><strong>Serial Numbers:</strong> {req.serial_numbers.join(", ")}</p>

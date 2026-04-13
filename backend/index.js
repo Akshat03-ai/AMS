@@ -2305,33 +2305,28 @@ app.get(
         .where("office_id", "==", req.user.office_id)
         .get();
 
-      // 🔹 Build Asset Map
       const assetsMap = {};
       assetSnap.forEach(doc => {
         const assetData = doc.data();
         assetsMap[assetData.asset_id] = assetData;
       });
 
-      // 🔹 Build Users Map
       const usersMap = {};
       const usersRoom = {};
       usersSnap.forEach(doc => {
         const userData = doc.data();
-        // map by business user_id and by auth uid (doc id) for robust lookup
         usersMap[userData.user_id] = userData.name || "Unknown";
         usersMap[doc.id] = userData.name || "Unknown";
         usersRoom[userData.user_id] = userData.room_id || null;
         usersRoom[doc.id] = userData.room_id || null;
       });
 
-      // 🔹 Build Assignment Response (resolve names + normalize dates)
       const assignments = await Promise.all(
         assignmentSnap.docs.map(async (doc) => {
           const assignmentData = doc.data();
 
           const asset = assetsMap[assignmentData.asset_id] || {};
 
-          // Resolve employee name and room: try maps first, fall back to DB fetch
           let employeeName =
             usersMap[assignmentData.assigned_to] ||
             usersMap[assignmentData.assigned_uid] ||
@@ -2368,7 +2363,7 @@ app.get(
                   employeeName = u.name || employeeName;
                   employeeRoom = u.room_id || employeeRoom;
                 } else {
-                  // Fallback: try by name (for legacy data where assigned_to is the name)
+
                   const byName = await db
                     .collection("Users")
                     .where("name", "==", String(assignmentData.assigned_to))
@@ -2386,7 +2381,6 @@ app.get(
             }
           }
 
-          // Normalize assigned and returned dates to ISO strings where possible
           const toISO = (val) => {
             if (!val) return null;
             try {

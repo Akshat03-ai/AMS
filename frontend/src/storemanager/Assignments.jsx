@@ -24,9 +24,9 @@ function Assignments() {
         inventory_id: "",
         assigned_to: "",
         quantity: "",
+        serial_numbers: [],
         assigned_date: new Date().toISOString().split("T")[0],
         returned_date: "",
-        remarks: "",
         request_id: "",
     });
 
@@ -141,11 +141,9 @@ function Assignments() {
                 inventory_id: matchedInventoryId,
                 assigned_to: prefill.requested_by || "",
                 quantity: prefill.quantity || "",
+                serial_numbers: [],
                 assigned_date: new Date().toISOString().split("T")[0],
                 returned_date: "",
-                remarks: prefill.description
-                    ? `Approved Request: ${prefill.description}`
-                    : "Approved via Request",
                 request_id: prefill.request_id || "",
             }));
 
@@ -184,7 +182,6 @@ function Assignments() {
             quantity: Number(assignmentForm.quantity),
             serial_numbers: filledSerials,
             returned_date: assignmentForm.returned_date || null,
-            remarks: assignmentForm.remarks || "",
         };
 
         // 1. Create the Assignment
@@ -233,8 +230,8 @@ function Assignments() {
             quantity: "",
             assigned_date: new Date().toISOString().split("T")[0],
             returned_date: "",
-            remarks: "",
             request_id: "",
+            serial_numbers: [],
         });
 
         fetchData();
@@ -255,9 +252,9 @@ function Assignments() {
             inventory_id: assignment.inventory_id || "",
             assigned_to: assignment.assigned_to || assignment.assigned_uid || "",
             quantity: assignment.quantity || "",
+            serial_numbers: assignment.serial_numbers || [],
             assigned_date: assignment.assigned_iso ? assignment.assigned_iso.split("T")[0] : new Date().toISOString().split("T")[0],
             returned_date: assignment.returned_iso ? assignment.returned_iso.split("T")[0] : "",
-            remarks: assignment.remarks || "",
         });
         setShowModal(true);
     };
@@ -270,7 +267,6 @@ function Assignments() {
         const payload = {
             assigned_date: assignmentForm.assigned_date || null,
             returned_date: assignmentForm.returned_date || null,
-            remarks: assignmentForm.remarks || "",
         };
 
         const res = await fetch(
@@ -475,9 +471,9 @@ function Assignments() {
                                     inventory_id: "",
                                     assigned_to: "",
                                     quantity: "",
+                                    serial_numbers: [],
                                     assigned_date: new Date().toISOString().split("T")[0],
                                     returned_date: "",
-                                    remarks: ""
                                 });
                                 setShowModal(true);
                             }}
@@ -629,23 +625,32 @@ function Assignments() {
                                 min="1"
                                 max={selectedInventory?.quantity || ""}
                                 value={assignmentForm.quantity}
-                                onChange={(e) =>
-                                    setAssignmentForm({
-                                        ...assignmentForm,
-                                        quantity: e.target.value,
-                                        // Reset serials if quantity changes
-                                        serial_numbers: []
-                                    })
-                                }
+                                onChange={(e) => {
+                                    const newQty = parseInt(e.target.value, 10);
+                                    // Protect against NaN or negative numbers blowing up the array
+                                    const safeQty = isNaN(newQty) || newQty < 0 ? 0 : newQty;
+
+                                    setAssignmentForm(prev => {
+                                        // Preserve existing serials, just slice to the new length
+                                        const currentSerials = prev.serial_numbers || [];
+                                        const adjustedSerials = currentSerials.slice(0, safeQty);
+
+                                        return {
+                                            ...prev,
+                                            quantity: e.target.value,
+                                            serial_numbers: adjustedSerials
+                                        };
+                                    });
+                                }}
                             />
 
                             {/* DYNAMIC SERIAL NUMBER INPUTS */}
-                            {assignmentForm.quantity > 0 && (
-                                <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                    <p style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: "5px" }}>
+                            {Number(assignmentForm.quantity) > 0 && Number(assignmentForm.quantity) <= 100 && (
+                                <div className="serial-numbers-section">
+                                    <p className="serial-numbers-label">
                                         Serial Numbers (Optional)
                                     </p>
-                                    <div style={{ display: "grid", gap: "8px", gridTemplateColumns: "1fr 1fr" }}>
+                                    <div className="serial-numbers-grid">
                                         {Array.from({ length: Number(assignmentForm.quantity) }).map((_, i) => (
                                             <input
                                                 key={i}
@@ -657,10 +662,18 @@ function Assignments() {
                                                     newSerials[i] = e.target.value;
                                                     setAssignmentForm({ ...assignmentForm, serial_numbers: newSerials });
                                                 }}
-                                                style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
                                             />
                                         ))}
                                     </div>
+                                </div>
+                            )}
+
+                            {/* Inform user for bulk assignments */}
+                            {Number(assignmentForm.quantity) > 100 && (
+                                <div className="bulk-mode-warning">
+                                    <p className="bulk-mode-text">
+                                        <strong>📦 Bulk Assignment Mode:</strong> Quantity is too high for manual serial number entry. You can still click <strong>Submit</strong> to assign these assets without tracking individual serial numbers.
+                                    </p>
                                 </div>
                             )}
 
@@ -701,7 +714,7 @@ function Assignments() {
                                 </select>
                             )}
 
-                            {/* DATES & REMARKS */}
+                            {/* DATES */}
                             <input
                                 type="date"
                                 value={assignmentForm.assigned_date}
@@ -720,17 +733,6 @@ function Assignments() {
                                     setAssignmentForm({
                                         ...assignmentForm,
                                         returned_date: e.target.value,
-                                    })
-                                }
-                            />
-
-                            <textarea
-                                placeholder="Remarks"
-                                value={assignmentForm.remarks}
-                                onChange={(e) =>
-                                    setAssignmentForm({
-                                        ...assignmentForm,
-                                        remarks: e.target.value,
                                     })
                                 }
                             />
