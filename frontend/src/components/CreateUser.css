@@ -23,7 +23,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-width: 150px;   /* prevents collapsing */
+  min-width: 150px;
+  /* prevents collapsing */
   z-index: 2;
 }
 
@@ -47,6 +48,7 @@
 .header-right {
   min-width: 150px;
 }
+
 /* ===============================
    CREATE USER BACK BUTTON (SCOPED)
    =============================== */
@@ -55,7 +57,7 @@
   padding: 8px 14px;
   border-radius: 50px;
   background: transparent;
-  border:transparent;
+  border: transparent;
   color: #1e3a8a;
   font-weight: 600;
   font-size: 0.85rem;
@@ -96,7 +98,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
-} 
+}
 
 .admin-nav-btn:hover {
   transform: translateY(-2px);
@@ -231,7 +233,8 @@
   }
 
   .header-center {
-    position: static; /* 👈 REMOVE absolute */
+    position: static;
+    /* 👈 REMOVE absolute */
     transform: none;
   }
 
@@ -319,4 +322,16 @@
 .back-btn:hover {
   background: #2563eb;
   color: white;
+}
+
+/* ===============================
+   DISABLED FIELDS (STORE MANAGER)
+=============================== */
+
+.form-grid select:disabled {
+  background: #f1f5f9;
+  color: #475569;
+  cursor: not-allowed;
+  opacity: 0.9;
+  border: 1px solid #cbd5f5;
 }

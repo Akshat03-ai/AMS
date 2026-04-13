@@ -2437,6 +2437,7 @@ app.post(
         inventory_id,
         assigned_to,
         quantity,
+        serial_numbers,
         assigned_date,
         returned_date,
         remarks,
@@ -2475,6 +2476,17 @@ app.post(
         return res.status(409).json({ message: "Asset not available" });
       }
 
+      if (serial_numbers && serial_numbers.length > 0) {
+        if (!Array.isArray(serial_numbers)) {
+          return res.status(400).json({ message: "Serial numbers must be array" });
+        }
+
+        if (serial_numbers.length !== Number(quantity)) {
+          return res.status(400).json({
+            message: "Serial numbers must match quantity",
+          });
+        }
+      }
       // ==========================================
       // 1. RESOLVE USER IDENTITY FIRST
       // ==========================================
@@ -2540,6 +2552,17 @@ app.post(
         assignment_id = existingData.assignment_id;
 
         const updatedQty = Number(existingData.quantity) + Number(quantity);
+
+        const updatedSerials = [
+          ...(existingData.serial_numbers || []),
+          ...(serial_numbers || [])
+        ];
+
+        await existingDoc.ref.update({
+          quantity: updatedQty,
+          serial_numbers: updatedSerials, // 👈 ADD THIS
+          remarks: remarks || addedRemarks,
+        });
         const addedRemarks = existingData.remarks
           ? `${existingData.remarks} | Added ${quantity} on ${new Date().toLocaleDateString()}`
           : `Added ${quantity} units on ${new Date().toLocaleDateString()}`;
@@ -2559,6 +2582,7 @@ app.post(
           inventory_id,
           asset_id: inventoryData.asset_id,
           quantity: Number(quantity),
+          serial_numbers: serial_numbers || [],
           assigned_to: final_assigned_to,
           assigned_uid: assigned_uid,
           assigned_date: finalAssignedDate,
@@ -2659,6 +2683,30 @@ app.patch(
 
       if (data.office_id !== req.user.office_id) {
         return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      const returnSerials = req.body.serial_numbers || [];
+
+      if (returnSerials.length > 0) {
+        const existingSerials = data.serial_numbers || [];
+
+        const invalid = returnSerials.filter(s => !existingSerials.includes(s));
+        if (invalid.length > 0) {
+          return res.status(400).json({
+            message: "Invalid serial numbers in return",
+          });
+        }
+
+        // remove returned serials
+        const remainingSerials = existingSerials.filter(
+          s => !returnSerials.includes(s)
+        );
+
+        await ref.update({
+          serial_numbers: remainingSerials,
+          quantity: remainingSerials.length,
+          returned_date: remainingSerials.length === 0 ? new Date() : null
+        });
       }
 
       // 🔄 Update assignment
@@ -3182,7 +3230,7 @@ app.post(
           asset_category || assignmentDoc?.asset_category || null,
 
         quantity,
-
+        serial_numbers: serial_numbers || [],
         return_date: return_date || null,
 
         disposal_reason: disposal_reason || null,
@@ -3258,61 +3306,66 @@ app.get(
 // ==============================
 // 📄 GET STORE MANAGER REQUESTS
 // ==============================
-
 app.get(
   "/api/store-manager/requests",
   authenticate,
   authorizeRole(["store manager"]),
   async (req, res) => {
     try {
-
       const user = req.user;
-
       if (!user || !user.office_id) {
-        return res.status(400).json({
-          message: "User office not found"
-        });
+        return res.status(400).json({ message: "User office not found" });
       }
 
-      // fetch requests belonging to this office
+      // 1. Fetch requests
       const snapshot = await db
         .collection("Requests")
         .where("office_id", "==", user.office_id)
         .get();
 
+      // 2. Fetch Users (Removed the strict office_id filter here to guarantee we find the user 
+      // even if there was a data inconsistency or they changed offices)
+      const usersSnap = await db.collection("Users").get();
+
+      const userMap = {};
+      usersSnap.forEach(doc => {
+        const u = doc.data();
+
+        // 🔑 THE FIX: Force everything to a String to prevent "003" vs 3 mismatches
+        if (u.user_id) {
+          userMap[String(u.user_id)] = { name: u.name, room: u.room_id };
+        }
+        // Also map by Firebase Document ID just in case
+        userMap[String(doc.id)] = { name: u.name, room: u.room_id };
+      });
+
       const requests = [];
-
       snapshot.forEach((doc) => {
-
         const data = doc.data();
+
+        // 🔑 THE FIX: Force the requested_by value to a string
+        const requestedByStr = String(data.requested_by);
+
+        const officerInfo = userMap[requestedByStr] || { name: "Unknown", room: "Unknown" };
 
         requests.push({
           ...data,
-          id: doc.id
+          id: doc.id,
+          officer_name: officerInfo.name,
+          room_id: officerInfo.room
         });
-
       });
 
-      // sort manually instead of Firestore orderBy
       requests.sort((a, b) => {
-
         const t1 = a.created_at?._seconds || 0;
         const t2 = b.created_at?._seconds || 0;
-
         return t2 - t1;
-
       });
 
       res.status(200).json(requests);
-
     } catch (err) {
-
       console.error("FETCH STORE MANAGER REQUESTS ERROR:", err);
-
-      res.status(500).json({
-        message: "Failed to fetch requests"
-      });
-
+      res.status(500).json({ message: "Failed to fetch requests" });
     }
   }
 );
@@ -3873,10 +3926,10 @@ app.get(
 
       const [snapByUserId, snapByUid] = await Promise.all([
         db
-        .collection("asset_assignments")
-        .where("assigned_to", "==", officerUserId)
-        .where("returned_date", "==", null)
-        .get(),
+          .collection("asset_assignments")
+          .where("assigned_to", "==", officerUserId)
+          .where("returned_date", "==", null)
+          .get(),
         db
           .collection("asset_assignments")
           .where("assigned_uid", "==", officerUid)
@@ -4540,18 +4593,24 @@ app.patch(
           const invDoc = inventorySnap.docs[0];
           const invData = invDoc.data();
 
-          const newAssignmentQty =
-            Number(assignment.quantity) - returnQty;
+          // ... inside the RETURN case ...
+          const newAssignmentQty = Number(assignment.quantity) - returnQty;
+          const newInventoryQty = Number(invData.quantity || 0) + returnQty;
 
-          const newInventoryQty =
-            Number(invData.quantity || 0) + returnQty;
+          // 🔥 NEW: Filter out the returned serial numbers
+          const returnSerials = request.serial_numbers || [];
+          let remainingSerials = assignment.serial_numbers || [];
+
+          if (returnSerials.length > 0) {
+            remainingSerials = remainingSerials.filter(s => !returnSerials.includes(s));
+          }
 
           // 🔒 TRANSACTION
           await db.runTransaction(async (t) => {
             t.update(assignmentDoc.ref, {
               quantity: newAssignmentQty,
-              returned_date:
-                newAssignmentQty === 0 ? new Date() : null
+              serial_numbers: remainingSerials, // 👈 Removes returned serials
+              returned_date: newAssignmentQty === 0 ? new Date() : null
             });
 
             t.update(invDoc.ref, {

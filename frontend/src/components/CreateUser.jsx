@@ -51,6 +51,15 @@ function CreateUser() {
 
             const data = await res.json();
             setCurrentRole(data.role);
+
+            if (data.role === "store manager") {
+                setForm(prev => ({
+                    ...prev,
+                    role: "officer",
+                    department_id: data.department_id,
+                    office_id: data.office_id
+                }));
+            }
         };
 
         fetchRole();
@@ -306,6 +315,7 @@ function CreateUser() {
                                     setForm({ ...form, department_id: e.target.value, office_id: "" })
                                 }
                                 required
+                                disabled={currentRole === "store manager"}
                             >
                                 <option value="">Select Department</option>
                                 {departments.map((d) => (
@@ -323,7 +333,9 @@ function CreateUser() {
                                 value={form.office_id}
                                 onChange={handleChange}
                                 required
-                                disabled={!form.department_id}
+                                disabled={
+                                    currentRole === "store manager" || !form.department_id
+                                }
                             >
                                 <option value="">Select Office</option>
                                 {offices

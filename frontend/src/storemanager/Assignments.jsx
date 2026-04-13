@@ -111,16 +111,20 @@ function Assignments() {
     }, []);
 
     useEffect(() => {
-        // Only run if we actually have data and the modal isn't already open
-        if (loading || inventory.length === 0 || officers.length === 0 || showModal) return;
+        if (loading || inventory.length === 0 || officers.length === 0 || assets.length === 0) return;
 
         if (prefill) {
             let matchedInventoryId = "";
 
-            if (prefill.asset_id) {
-                const availableBatches = inventory.filter(
-                    i => i.asset_id === prefill.asset_id && i.status === "Available" && i.quantity > 0
-                );
+            if (prefill.asset_name || prefill.asset_id) {
+                const availableBatches = inventory.filter(i => {
+                    const asset = assets.find(a => a.asset_id === i.asset_id);
+
+                    const matchesId = prefill.asset_id && i.asset_id === prefill.asset_id;
+                    const matchesName = prefill.asset_name && asset?.asset_name === prefill.asset_name;
+
+                    return (matchesId || matchesName) && i.status === "Available" && i.quantity > 0;
+                });
 
                 if (availableBatches.length > 0) {
                     const goodBatch = availableBatches.find(i => i.condition === "Good");
@@ -128,27 +132,28 @@ function Assignments() {
                     const poorBatch = availableBatches.find(i => i.condition === "Poor");
 
                     const bestBatch = goodBatch || fairBatch || poorBatch || availableBatches[0];
-                    matchedInventoryId = bestBatch.inventory_id;
+                    matchedInventoryId = String(bestBatch.inventory_id);
                 }
             }
 
-            setAssignmentForm({
+            setAssignmentForm(prev => ({
+                ...prev,
                 inventory_id: matchedInventoryId,
                 assigned_to: prefill.requested_by || "",
                 quantity: prefill.quantity || "",
                 assigned_date: new Date().toISOString().split("T")[0],
                 returned_date: "",
-                remarks: prefill.description ? `Approved Request: ${prefill.description}` : "Approved via Request",
+                remarks: prefill.description
+                    ? `Approved Request: ${prefill.description}`
+                    : "Approved via Request",
                 request_id: prefill.request_id || "",
-            });
+            }));
 
             setShowModal(true);
 
-            // Replace the URL state so it doesn't trigger again
             navigate(currentPath, { replace: true, state: null });
         }
-        // 🔥 FIXED DEPENDENCY ARRAY: Remove location.state and use primitive values
-    }, [loading, inventory, officers, prefill, currentPath, navigate, showModal]);
+    }, [loading, inventory, officers, assets, prefill, currentPath, navigate]);
 
     /* =============================
        CREATE ASSIGNMENT
@@ -164,12 +169,20 @@ function Assignments() {
             return;
         }
 
+        const filledSerials = (assignmentForm.serial_numbers || []).filter(s => s && s.trim() !== "");
+
+        if (filledSerials.length > 0 && filledSerials.length !== Number(assignmentForm.quantity)) {
+            alert(`Please provide exactly ${assignmentForm.quantity} serial numbers, or leave them all blank.`);
+            return;
+        }
+
         const token = await getAuth().currentUser.getIdToken();
 
         const payload = {
             inventory_id: assignmentForm.inventory_id,
             assigned_to: assignmentForm.assigned_to,
             quantity: Number(assignmentForm.quantity),
+            serial_numbers: filledSerials,
             returned_date: assignmentForm.returned_date || null,
             remarks: assignmentForm.remarks || "",
         };
@@ -225,7 +238,7 @@ function Assignments() {
         });
 
         fetchData();
-        
+
         if (assignmentForm.request_id) {
             alert("Request completed successfully ✅");
             navigate("/store-manager/requests");
@@ -310,7 +323,7 @@ function Assignments() {
     };
 
     const selectedInventory = inventory.find(
-        i => i.inventory_id === assignmentForm.inventory_id
+        i => i.inventory_id === String(assignmentForm.inventory_id)
     );
 
     /* =============================
@@ -477,83 +490,83 @@ function Assignments() {
                         <div className="assignment-empty">No assignments found</div>
                     ) : (
                         <div className="table-scroll">
-                        <table className="assignment-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Asset</th>
-                                    <th>Officer</th>
-                                    <th>Location</th>
-                                    <th>Quantity</th>
-                                    <th>Condition</th>
-                                    <th>Assigned</th>
-                                    <th>Returned</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredAssignments.map((a) => {
-                                    const active = !a.returned_iso;
-                                    return (
-                                        <tr key={a.assignment_id}>
-                                            <td>{a.assignment_id}</td>
-                                            <td>{a.asset_name}</td>
-                                            <td>{a.employee_name || (officersMap[a.assigned_to]?.name || officersMap[a.assigned_uid]?.name || officersMap[a.assigned_to]?.employee_name || "-")}</td>
-                                            <td>{a.assigned_room || officersMap[a.assigned_to]?.room_id || officersMap[a.assigned_uid]?.room_id || "-"}</td>
-                                            <td>{a.quantity}</td>
-                                            <td>{(inventory.find(i => i.inventory_id === a.inventory_id) || {}).condition || "-"}</td>
-                                            <td>
-                                                {a.assigned_iso ? new Date(a.assigned_iso).toLocaleString() : "-"}
-                                            </td>
-                                            <td>
-                                                {a.returned_iso ? (
-                                                    new Date(a.returned_iso).toLocaleString()
-                                                ) : (
-                                                    <button
-                                                        className="assignment-return-inline"
-                                                        onClick={() => handleReturn(a.id)}
-                                                        title="Return"
+                            <table className="assignment-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Asset</th>
+                                        <th>Officer</th>
+                                        <th>Location</th>
+                                        <th>Quantity</th>
+                                        <th>Condition</th>
+                                        <th>Assigned</th>
+                                        <th>Returned</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredAssignments.map((a) => {
+                                        const active = !a.returned_iso;
+                                        return (
+                                            <tr key={a.assignment_id}>
+                                                <td>{a.assignment_id}</td>
+                                                <td>{a.asset_name}</td>
+                                                <td>{a.employee_name || (officersMap[a.assigned_to]?.name || officersMap[a.assigned_uid]?.name || officersMap[a.assigned_to]?.employee_name || "-")}</td>
+                                                <td>{a.assigned_room || officersMap[a.assigned_to]?.room_id || officersMap[a.assigned_uid]?.room_id || "-"}</td>
+                                                <td>{a.quantity}</td>
+                                                <td>{(inventory.find(i => i.inventory_id === a.inventory_id) || {}).condition || "-"}</td>
+                                                <td>
+                                                    {a.assigned_iso ? new Date(a.assigned_iso).toLocaleString() : "-"}
+                                                </td>
+                                                <td>
+                                                    {a.returned_iso ? (
+                                                        new Date(a.returned_iso).toLocaleString()
+                                                    ) : (
+                                                        <button
+                                                            className="assignment-return-inline"
+                                                            onClick={() => handleReturn(a.id)}
+                                                            title="Return"
+                                                        >
+                                                            Return
+                                                        </button>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        className={
+                                                            active
+                                                                ? "assignment-status-active"
+                                                                : "assignment-status-returned"
+                                                        }
                                                     >
-                                                        Return
+                                                        {active ? "Active" : "Returned"}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        className="assignment-icon-btn assignment-edit-btn"
+                                                        onClick={() => openEditModal(a)}
+                                                        aria-label={`Edit ${a.assignment_id}`}
+                                                        title="Edit"
+                                                    >
+                                                        <FiEdit2 size={14} />
                                                     </button>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <span
-                                                    className={
-                                                        active
-                                                            ? "assignment-status-active"
-                                                            : "assignment-status-returned"
-                                                    }
-                                                >
-                                                    {active ? "Active" : "Returned"}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className="assignment-icon-btn assignment-edit-btn"
-                                                    onClick={() => openEditModal(a)}
-                                                    aria-label={`Edit ${a.assignment_id}`}
-                                                    title="Edit"
-                                                >
-                                                    <FiEdit2 size={14} />
-                                                </button>
 
-                                                <button
-                                                    className="assignment-icon-btn assignment-delete-btn"
-                                                    onClick={() => handleDelete(a.id)}
-                                                    aria-label={`Delete ${a.assignment_id}`}
-                                                    title="Delete"
-                                                >
-                                                    <FiTrash2 size={14} />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                                                    <button
+                                                        className="assignment-icon-btn assignment-delete-btn"
+                                                        onClick={() => handleDelete(a.id)}
+                                                        aria-label={`Delete ${a.assignment_id}`}
+                                                        title="Delete"
+                                                    >
+                                                        <FiTrash2 size={14} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </>
@@ -581,12 +594,11 @@ function Assignments() {
                         <div className="assignment-modal-body">
                             {/* ASSET SELECTION */}
                             <select
-                                value={assignmentForm.inventory_id}
+                                value={String(assignmentForm.inventory_id)}
                                 onChange={(e) =>
                                     setAssignmentForm({
                                         ...assignmentForm,
                                         inventory_id: e.target.value,
-                                        quantity: "", // Reset qty when asset changes
                                     })
                                 }
                                 disabled={modalMode === "edit"} // Can't change asset when editing
@@ -597,7 +609,7 @@ function Assignments() {
                                     .map((i) => {
                                         const asset = assetMap[i.asset_id];
                                         return (
-                                            <option key={i.inventory_id} value={i.inventory_id}>
+                                            <option key={i.inventory_id} value={String(i.inventory_id)}>
                                                 {asset?.asset_name} ({i.condition})
                                             </option>
                                         );
@@ -621,9 +633,36 @@ function Assignments() {
                                     setAssignmentForm({
                                         ...assignmentForm,
                                         quantity: e.target.value,
+                                        // Reset serials if quantity changes
+                                        serial_numbers: []
                                     })
                                 }
                             />
+
+                            {/* DYNAMIC SERIAL NUMBER INPUTS */}
+                            {assignmentForm.quantity > 0 && (
+                                <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                                    <p style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: "5px" }}>
+                                        Serial Numbers (Optional)
+                                    </p>
+                                    <div style={{ display: "grid", gap: "8px", gridTemplateColumns: "1fr 1fr" }}>
+                                        {Array.from({ length: Number(assignmentForm.quantity) }).map((_, i) => (
+                                            <input
+                                                key={i}
+                                                type="text"
+                                                placeholder={`Serial Number ${i + 1}`}
+                                                value={assignmentForm.serial_numbers?.[i] || ""}
+                                                onChange={(e) => {
+                                                    const newSerials = [...(assignmentForm.serial_numbers || [])];
+                                                    newSerials[i] = e.target.value;
+                                                    setAssignmentForm({ ...assignmentForm, serial_numbers: newSerials });
+                                                }}
+                                                style={{ padding: "8px", borderRadius: "6px", border: "1px solid #d1d5db" }}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* OFFICER SELECTION */}
                             {modalMode === "edit" ? (
