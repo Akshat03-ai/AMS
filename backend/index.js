@@ -3113,7 +3113,8 @@ app.post(
         disposal_reason,
         description,
         company,
-        image_url
+        image_url,
+        serial_numbers
       } = req.body;
 
       const user = req.user;
