@@ -282,6 +282,7 @@ function Request() {
             setError(err.message);
         } finally {
             setLoading(false);
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
     };
 

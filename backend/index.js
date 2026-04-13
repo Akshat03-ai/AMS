@@ -2555,7 +2555,6 @@ app.post(
         await existingDoc.ref.update({
           quantity: updatedQty,
           serial_numbers: updatedSerials, // 👈 ADD THIS
-          remarks: remarks || addedRemarks,
         });
         const addedRemarks = existingData.remarks
           ? `${existingData.remarks} | Added ${quantity} on ${new Date().toLocaleDateString()}`
@@ -2563,8 +2562,6 @@ app.post(
 
         await existingDoc.ref.update({
           quantity: updatedQty,
-          remarks: remarks || addedRemarks,
-          // We usually keep the original assigned_date when merging, but update remarks
         });
 
       } else {
@@ -3208,6 +3205,22 @@ app.post(
       // ==========================
       const request_id = "REQ-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
+      // ==========================
+      // DETERMINE ASSET CATEGORY
+      // ==========================
+      let assetCategory = asset_category;
+
+      if (!assetCategory && assignmentDoc?.asset_id) {
+        const assetSnap = await db
+          .collection("assets")
+          .where("asset_id", "==", assignmentDoc.asset_id)
+          .limit(1)
+          .get();
+
+        if (!assetSnap.empty) {
+          assetCategory = assetSnap.docs[0].data().asset_category;
+        }
+      }
       // ==========================
       // CREATE REQUEST
       // ==========================
