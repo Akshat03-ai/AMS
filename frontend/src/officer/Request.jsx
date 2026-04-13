@@ -17,6 +17,7 @@ function Request() {
         custom_category: "",
         asset_name: "",
         quantity: 1,
+        serial_numbers: [],
         disposal_reason: "",
         description: "",
         company: "",
@@ -180,13 +181,16 @@ function Request() {
 
             if (selected) {
                 const qty = selected.quantity || selected.assigned_quantity || 1;
-
                 setSelectedAssignmentQty(qty);
+
+                // 🚀 NEW: Auto-grab the serials from the backend data
+                const availableSerials = selected.serial_numbers || [];
 
                 setForm((prev) => ({
                     ...prev,
                     assignment_id: value,
-                    quantity: 1
+                    quantity: 1,
+                    serial_numbers: availableSerials.slice(0, 1) // Auto-fills the first box
                 }));
             }
         }
@@ -202,6 +206,7 @@ function Request() {
             description: "",
             image_url: "",
             quantity: 1,
+            serial_numbers: [],
         }));
         setSelectedAssignmentQty(0);
         setProcurementMode(false);
@@ -240,6 +245,7 @@ function Request() {
             const payload = {
                 ...form,
                 request_type: finalType,
+                serial_numbers: form.serial_numbers || [],
                 asset_category:
                     form.asset_category === "Others"
                         ? form.custom_category

@@ -3061,7 +3061,7 @@ app.get("/api/officer/my-assets", authenticate, authorizeRole(["officer"]), asyn
           id: doc.id,
           assignment_id: data.assignment_id,
           asset_id: data.asset_id,
-
+          serial_numbers: data.serial_numbers || [],
           asset_name: asset.asset_name || "Unknown",
           asset_photo_url: asset.asset_photo_url || null,
           asset_category: asset.asset_category || "Uncategorized",
@@ -4605,7 +4605,7 @@ app.patch(
           const newAssignmentQty = Number(assignment.quantity) - returnQty;
           const newInventoryQty = Number(invData.quantity || 0) + returnQty;
 
-          // 🔥 NEW: Filter out the returned serial numbers
+          // Filter out the returned serial numbers
           const returnSerials = request.serial_numbers || [];
           let remainingSerials = assignment.serial_numbers || [];
 
