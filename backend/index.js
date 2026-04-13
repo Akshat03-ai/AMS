@@ -160,6 +160,16 @@ app.post(
         });
       }
 
+      // 🔐 PASSWORD STRENGTH VALIDATION
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+      if (!passwordRegex.test(password)) {
+        return res.status(400).json({
+          message:
+            "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+        });
+      }
       let assignedRole;
 
       if (req.user.role === "admin") {
