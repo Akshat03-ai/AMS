@@ -3262,7 +3262,7 @@ app.post(
 
         assignment_id: assignment_id || null,
 
-        asset_name: asset_name || assetName || null,
+        asset_name: asset_name || assetName || "Unknown Asset",
         asset_id: asset_id || assignmentDoc?.asset_id || null,
 
         asset_category:

@@ -82,29 +82,31 @@ function Request() {
                     ...prev,
                     request_type: "ISSUE"
                 }));
+                window.history.replaceState({}, document.title);
             }
 
             // 🟢 CASE 2: RETURN
-            else if (assignment_id && assignments.length > 0) {
+            else if (request_type === "RETURN" && assignment_id) {
+                if (assignments.length > 0) {
+                    const isValidAssignment = assignments.find(
+                        a => String(a.assignment_id) === String(assignment_id)
+                    );
 
-                const isValidAssignment = assignments.find(
-                    a => String(a.assignment_id) === String(assignment_id)
-                );
+                    if (isValidAssignment) {
+                        setForm(prev => ({
+                            ...prev,
+                            request_type,
+                            assignment_id,
+                            quantity: 1,
+                            asset_name: isValidAssignment.asset_name
+                        }));
 
-                if (isValidAssignment) {
-                    setForm(prev => ({
-                        ...prev,
-                        request_type,
-                        assignment_id,
-                        quantity: 1
-                    }));
-
-                    setSelectedAssignmentQty(max_qty);
-                    handleAssignmentChange(isValidAssignment);
+                        setSelectedAssignmentQty(max_qty);
+                        handleAssignmentChange(isValidAssignment);
+                        window.history.replaceState({}, document.title);
+                    }
                 }
             }
-
-            window.history.replaceState({}, document.title);
         }
     }, [location.state, assignments]);
 
@@ -197,13 +199,15 @@ function Request() {
                     ...prev,
                     assignment_id: value,
                     quantity: 1,
-                    serial_numbers: []
+                    serial_numbers: [],
+                    asset_name: selected.asset_name,
                 }));
             }
         }
     };
 
     useEffect(() => {
+        if (location.state?.autoFill) return;
         setForm((prev) => ({
             ...prev,
             assignment_id: "",
@@ -431,10 +435,10 @@ function Request() {
                                         <h4>Select Serial Numbers</h4>
                                         <span
                                             className={`serial-counter ${selectedSerials.length === 0
-                                                    ? "danger"
-                                                    : selectedSerials.length === Number(form.quantity)
-                                                        ? "success"
-                                                        : "warning"
+                                                ? "danger"
+                                                : selectedSerials.length === Number(form.quantity)
+                                                    ? "success"
+                                                    : "warning"
                                                 }`}
                                         >
                                             Selected: {selectedSerials.length} / {form.quantity}
