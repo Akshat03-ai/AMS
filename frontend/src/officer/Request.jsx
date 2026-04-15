@@ -35,6 +35,7 @@ function Request() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [noSerialQty, setNoSerialQty] = useState(0);
 
     /* ================= FETCH ASSIGNED ASSETS ================= */
     useEffect(() => {
@@ -109,6 +110,25 @@ function Request() {
             }
         }
     }, [location.state, assignments]);
+
+    /* ================= GROUP ASSIGNMENTS BY ASSET NAME ================= */
+    const groupedAssignments = Object.values(
+        assignments.reduce((acc, a) => {
+            if (!acc[a.asset_name]) {
+                acc[a.asset_name] = {
+                    ...a,
+                    assignment_ids: [a.assignment_id],
+                    serial_numbers: [...(a.serial_numbers || [])],
+                    quantity: a.quantity || 0,
+                };
+            } else {
+                acc[a.asset_name].quantity += a.quantity || 0;
+                acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
+                acc[a.asset_name].assignment_ids.push(a.assignment_id);
+            }
+            return acc;
+        }, {})
+    );
 
     /* ================= FETCH ASSET MASTER ================= */
     useEffect(() => {
@@ -185,22 +205,34 @@ function Request() {
         }));
 
         if (name === "assignment_id") {
-            const selected = assignments.find(
-                (a) => a.assignment_id === value
+            const parsedIds = JSON.parse(value);
+
+            const selected = assignments.filter(
+                (a) => parsedIds.includes(a.assignment_id)
             );
 
-            if (selected) {
-                const qty = selected.quantity || selected.assigned_quantity || 1;
+            if (selected.length > 0) {
+                const totalQty = selected.reduce(
+                    (sum, a) => sum + (a.quantity || a.assigned_quantity || 1),
+                    0
+                );
 
-                setSelectedAssignmentQty(qty);
-                handleAssignmentChange(selected);
+                const allSerials = selected.flatMap(a => a.serial_numbers || []);
+
+                setSelectedAssignmentQty(totalQty);
+
+                setSelectedAssignment({
+                    serial_numbers: allSerials
+                });
+
+                setSelectedSerials([]);
 
                 setForm((prev) => ({
                     ...prev,
                     assignment_id: value,
                     quantity: 1,
                     serial_numbers: [],
-                    asset_name: selected.asset_name,
+                    asset_name: selected[0].asset_name,
                 }));
             }
         }
@@ -254,16 +286,24 @@ function Request() {
                 procurementMode ? "PROCUREMENT" : form.request_type;
 
 
-            if (selectedSerials.length !== form.quantity) {
+            const totalSelected = selectedSerials.length + noSerialQty;
+
+            if (
+                selectedAssignment?.serial_numbers?.length > 0 &&
+                totalSelected !== form.quantity
+            ) {
                 setLoading(false);
-                alert("Select exactly " + form.quantity + " serial numbers");
+                alert(`Total selected (${totalSelected}) must equal quantity (${form.quantity})`);
                 return;
             }
 
             const payload = {
                 ...form,
+                assignment_id: null,
+                assignment_ids: JSON.parse(form.assignment_id),
                 request_type: finalType,
                 serial_numbers: selectedSerials,
+                no_serial_quantity: Number(noSerialQty) || 0,
                 asset_category:
                     form.asset_category === "Others"
                         ? form.custom_category
@@ -389,8 +429,11 @@ function Request() {
                             required
                         >
                             <option value="">Select Assigned Asset</option>
-                            {assignments.map((a) => (
-                                <option key={a.assignment_id} value={a.assignment_id}>
+                            {groupedAssignments.map((a) => (
+                                <option
+                                    key={a.asset_name}
+                                    value={JSON.stringify(a.assignment_ids)}
+                                >
                                     {a.asset_name}
                                 </option>
                             ))}
@@ -410,10 +453,11 @@ function Request() {
                                 }));
 
                                 setSelectedSerials((prev) => prev.slice(0, val));
+                                setNoSerialQty(0); // reset when quantity changes
                             }}
                         />
 
-                        <small className="quantity-hint">
+                        < small className="quantity-hint" >
                             Max allowed: {selectedAssignmentQty}
                         </small>
 
@@ -441,15 +485,17 @@ function Request() {
                                                     : "warning"
                                                 }`}
                                         >
-                                            Selected: {selectedSerials.length} / {form.quantity}
+                                            Selected: {selectedSerials.length + noSerialQty} / {form.quantity}
                                         </span>
                                     </div>
 
                                     <div className="serial-grid">
                                         {selectedAssignment.serial_numbers.map((sn, index) => {
                                             const isChecked = selectedSerials.includes(sn);
+                                            const totalSelected = selectedSerials.length + noSerialQty;
+
                                             const isDisabled =
-                                                !isChecked && selectedSerials.length >= form.quantity;
+                                                !isChecked && totalSelected >= form.quantity;
 
                                             return (
                                                 <div
@@ -476,6 +522,24 @@ function Request() {
                                                 </div>
                                             );
                                         })}
+
+                                        <div className="no-serial-input">
+                                            <label>No Serial Quantity</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max={form.quantity - selectedSerials.length}
+                                                value={noSerialQty}
+                                                onChange={(e) => {
+                                                    const val = Number(e.target.value);
+
+                                                    if (val + selectedSerials.length > form.quantity) return;
+
+                                                    setNoSerialQty(val);
+                                                }}
+                                            />
+
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -495,80 +559,83 @@ function Request() {
                             onChange={handleChange}
                         />
                     </div>
-                )}
+                )
+                }
 
                 {/* ================= ISSUE ================= */}
-                {form.request_type === "ISSUE" && !procurementMode && (
-                    <div className="request-card">
-                        <h3>Asset Issue<span className="required-star">*</span></h3>
+                {
+                    form.request_type === "ISSUE" && !procurementMode && (
+                        <div className="request-card">
+                            <h3>Asset Issue<span className="required-star">*</span></h3>
 
-                        <select
-                            name="asset_category"
-                            value={form.asset_category}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map((c, i) => (
-                                <option key={i} value={c}>{c}</option>
-                            ))}
-                        </select>
-
-                        {/* If category selected but no assets found */}
-                        {form.asset_category && filteredAssets.length === 0 && (
-                            <p className="no-assets-text">
-                                No assets available in this category.
-                            </p>
-                        )}
-
-                        {/* If assets exist for selected category */}
-                        {filteredAssets.length > 0 && (
                             <select
-                                name="asset_name"
-                                value={form.asset_name}
+                                name="asset_category"
+                                value={form.asset_category}
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="">Select Asset</option>
-                                {filteredAssets.map((a) => (
-                                    <option key={a.asset_id} value={a.asset_name}>
-                                        {a.asset_name}
-                                    </option>
+                                <option value="">Select Category</option>
+                                {categories.map((c, i) => (
+                                    <option key={i} value={c}>{c}</option>
                                 ))}
                             </select>
-                        )}
 
-                        {selectedAsset?.asset_photo_url && (
-                            <div className="asset-preview">
-                                <img
-                                    src={selectedAsset.asset_photo_url}
-                                    alt={selectedAsset.asset_name}
-                                    className="asset-preview-img clickable"
-                                    onClick={() => setPreviewImage(selectedAsset.asset_photo_url)}
-                                />
-                                <p className="asset-preview-name">
-                                    {selectedAsset.asset_name}
+                            {/* If category selected but no assets found */}
+                            {form.asset_category && filteredAssets.length === 0 && (
+                                <p className="no-assets-text">
+                                    No assets available in this category.
                                 </p>
-                            </div>
-                        )}
+                            )}
 
-                        <input
-                            type="number"
-                            min="1"
-                            name="quantity"
-                            value={form.quantity}
-                            onChange={handleChange}
-                            required
-                        />
+                            {/* If assets exist for selected category */}
+                            {filteredAssets.length > 0 && (
+                                <select
+                                    name="asset_name"
+                                    value={form.asset_name}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">Select Asset</option>
+                                    {filteredAssets.map((a) => (
+                                        <option key={a.asset_id} value={a.asset_name}>
+                                            {a.asset_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
 
-                        <p
-                            className="procurement-toggle"
-                            onClick={() => setProcurementMode(true)}
-                        >
-                            Can't find desired asset? Request a new one.
-                        </p>
-                    </div>
-                )}
+                            {selectedAsset?.asset_photo_url && (
+                                <div className="asset-preview">
+                                    <img
+                                        src={selectedAsset.asset_photo_url}
+                                        alt={selectedAsset.asset_name}
+                                        className="asset-preview-img clickable"
+                                        onClick={() => setPreviewImage(selectedAsset.asset_photo_url)}
+                                    />
+                                    <p className="asset-preview-name">
+                                        {selectedAsset.asset_name}
+                                    </p>
+                                </div>
+                            )}
+
+                            <input
+                                type="number"
+                                min="1"
+                                name="quantity"
+                                value={form.quantity}
+                                onChange={handleChange}
+                                required
+                            />
+
+                            <p
+                                className="procurement-toggle"
+                                onClick={() => setProcurementMode(true)}
+                            >
+                                Can't find desired asset? Request a new one.
+                            </p>
+                        </div>
+                    )
+                }
 
                 {/* ================= MAINTENANCE ================= */}
                 {form.request_type === "MAINTENANCE" && (
@@ -582,8 +649,11 @@ function Request() {
                             required
                         >
                             <option value="">Select Assigned Asset</option>
-                            {assignments.map((a) => (
-                                <option key={a.assignment_id} value={a.assignment_id}>
+                            {groupedAssignments.map((a) => (
+                                <option
+                                    key={a.asset_name}
+                                    value={JSON.stringify(a.assignment_ids)}
+                                >
                                     {a.asset_name}
                                 </option>
                             ))}
@@ -591,11 +661,16 @@ function Request() {
 
                         <input
                             type="number"
-                            name="quantity"
                             min="1"
                             max={selectedAssignmentQty}
                             value={form.quantity}
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                const val = Number(e.target.value);
+
+                                setForm(prev => ({ ...prev, quantity: val }));
+                                setSelectedSerials(prev => prev.slice(0, val));
+                                setNoSerialQty(0);
+                            }}
                             disabled={!form.assignment_id}
                             required
                         />
@@ -603,6 +678,76 @@ function Request() {
                         <small className="quantity-hint">
                             Max allowed: {selectedAssignmentQty}
                         </small>
+
+                        {/* NO SERIALS FOUND */}
+                        {(!selectedAssignment?.serial_numbers || selectedAssignment.serial_numbers.length === 0) && (
+                            <div className="serial-empty-state">
+                                <span className="serial-empty-icon">ℹ️</span>
+                                <div className="serial-empty-text">
+                                    <p className="serial-empty-title">No Serial Numbers</p>
+                                    <p className="serial-empty-desc">This asset does not require individual serial tracking.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* SERIAL UI (same as return) */}
+                        {Array.isArray(selectedAssignment?.serial_numbers) &&
+                            selectedAssignment.serial_numbers.length > 0 && (
+                                <div className="serial-wrapper">
+
+                                    <div className="serial-header">
+                                        <h4>Select Serial Numbers</h4>
+                                        <span className="serial-counter">
+                                            Selected: {selectedSerials.length + noSerialQty} / {form.quantity}
+                                        </span>
+                                    </div>
+
+                                    <div className="serial-grid">
+                                        {selectedAssignment.serial_numbers.map((sn, index) => {
+                                            const isChecked = selectedSerials.includes(sn);
+                                            const totalSelected = selectedSerials.length + noSerialQty;
+
+                                            const isDisabled =
+                                                !isChecked && totalSelected >= form.quantity;
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`serial-card ${isChecked ? "selected" : ""} ${isDisabled ? "disabled" : ""}`}
+                                                    onClick={() => {
+                                                        if (isDisabled) return;
+
+                                                        if (isChecked) {
+                                                            setSelectedSerials(prev => prev.filter(s => s !== sn));
+                                                        } else {
+                                                            setSelectedSerials(prev => [...prev, sn]);
+                                                        }
+                                                    }}
+                                                >
+                                                    <input type="checkbox" checked={isChecked} readOnly />
+                                                    <span className="serial-text">{sn}</span>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* 🔥 NO SERIAL INPUT */}
+                                        <div className="no-serial-input">
+                                            <label>No Serial Quantity</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max={form.quantity - selectedSerials.length}
+                                                value={noSerialQty}
+                                                onChange={(e) => {
+                                                    const val = Number(e.target.value);
+                                                    if (val + selectedSerials.length > form.quantity) return;
+                                                    setNoSerialQty(val);
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                         <input type="file" onChange={handleImageUpload} />
 
@@ -628,8 +773,11 @@ function Request() {
                             required
                         >
                             <option value="">Select Assigned Asset</option>
-                            {assignments.map((a) => (
-                                <option key={a.assignment_id} value={a.assignment_id}>
+                            {groupedAssignments.map((a) => (
+                                <option
+                                    key={a.asset_name}
+                                    value={JSON.stringify(a.assignment_ids)}
+                                >
                                     {a.asset_name}
                                 </option>
                             ))}
@@ -637,18 +785,93 @@ function Request() {
 
                         <input
                             type="number"
-                            name="quantity"
                             min="1"
                             max={selectedAssignmentQty}
                             value={form.quantity}
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                const val = Number(e.target.value);
+
+                                setForm(prev => ({ ...prev, quantity: val }));
+                                setSelectedSerials(prev => prev.slice(0, val));
+                                setNoSerialQty(0);
+                            }}
                             disabled={!form.assignment_id}
                             required
                         />
 
                         <small className="quantity-hint">
-                            Max allowed: {selectedAssignmentQty} (Assigned Quantity)
+                            Max allowed: {selectedAssignmentQty}
                         </small>
+
+                        {/* NO SERIALS FOUND */}
+                        {(!selectedAssignment?.serial_numbers || selectedAssignment.serial_numbers.length === 0) && (
+                            <div className="serial-empty-state">
+                                <span className="serial-empty-icon">ℹ️</span>
+                                <div className="serial-empty-text">
+                                    <p className="serial-empty-title">No Serial Numbers</p>
+                                    <p className="serial-empty-desc">This asset does not require individual serial tracking.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* SERIAL UI */}
+                        {Array.isArray(selectedAssignment?.serial_numbers) &&
+                            selectedAssignment.serial_numbers.length > 0 && (
+                                <div className="serial-wrapper">
+
+                                    <div className="serial-header">
+                                        <h4>Select Serial Numbers</h4>
+                                        <span className="serial-counter">
+                                            Selected: {selectedSerials.length + noSerialQty} / {form.quantity}
+                                        </span>
+                                    </div>
+
+                                    <div className="serial-grid">
+                                        {selectedAssignment.serial_numbers.map((sn, index) => {
+                                            const isChecked = selectedSerials.includes(sn);
+                                            const totalSelected = selectedSerials.length + noSerialQty;
+
+                                            const isDisabled =
+                                                !isChecked && totalSelected >= form.quantity;
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`serial-card ${isChecked ? "selected" : ""} ${isDisabled ? "disabled" : ""}`}
+                                                    onClick={() => {
+                                                        if (isDisabled) return;
+
+                                                        if (isChecked) {
+                                                            setSelectedSerials(prev => prev.filter(s => s !== sn));
+                                                        } else {
+                                                            setSelectedSerials(prev => [...prev, sn]);
+                                                        }
+                                                    }}
+                                                >
+                                                    <input type="checkbox" checked={isChecked} readOnly />
+                                                    <span className="serial-text">{sn}</span>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* 🔥 NO SERIAL INPUT */}
+                                        <div className="no-serial-input">
+                                            <label>No Serial Quantity</label>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max={form.quantity - selectedSerials.length}
+                                                value={noSerialQty}
+                                                onChange={(e) => {
+                                                    const val = Number(e.target.value);
+                                                    if (val + selectedSerials.length > form.quantity) return;
+                                                    setNoSerialQty(val);
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                         <select
                             name="disposal_reason"
@@ -674,80 +897,81 @@ function Request() {
                         )}
 
                         <input type="file" onChange={handleImageUpload} />
-
                     </div>
                 )}
 
                 {/* ================= PROCUREMENT ================= */}
-                {procurementMode && (
-                    <div className="request-card">
-                        <h3>New Asset Request<span className="required-star">*</span></h3>
+                {
+                    procurementMode && (
+                        <div className="request-card">
+                            <h3>New Asset Request<span className="required-star">*</span></h3>
 
-                        <select
-                            name="asset_category"
-                            value={form.asset_category}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map((c, i) => (
-                                <option key={i} value={c}>{c}</option>
-                            ))}
-                            <option value="Others">Others</option>
-                        </select>
+                            <select
+                                name="asset_category"
+                                value={form.asset_category}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select Category</option>
+                                {categories.map((c, i) => (
+                                    <option key={i} value={c}>{c}</option>
+                                ))}
+                                <option value="Others">Others</option>
+                            </select>
 
-                        {form.asset_category === "Others" && (
+                            {form.asset_category === "Others" && (
+                                <input
+                                    name="custom_category"
+                                    placeholder="Enter Asset Category"
+                                    value={form.custom_category || ""}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            )}
+
                             <input
-                                name="custom_category"
-                                placeholder="Enter Asset Category"
-                                value={form.custom_category || ""}
+                                name="asset_name"
+                                placeholder="Asset Name"
+                                value={form.asset_name}
                                 onChange={handleChange}
                                 required
                             />
-                        )}
 
-                        <input
-                            name="asset_name"
-                            placeholder="Asset Name"
-                            value={form.asset_name}
-                            onChange={handleChange}
-                            required
-                        />
+                            <input
+                                name="company"
+                                placeholder="Company"
+                                value={form.company}
+                                onChange={handleChange}
+                            />
 
-                        <input
-                            name="company"
-                            placeholder="Company"
-                            value={form.company}
-                            onChange={handleChange}
-                        />
+                            <input
+                                type="number"
+                                min="1"
+                                name="quantity"
+                                value={form.quantity}
+                                onChange={handleChange}
+                                required
+                            />
 
-                        <input
-                            type="number"
-                            min="1"
-                            name="quantity"
-                            value={form.quantity}
-                            onChange={handleChange}
-                            required
-                        />
+                            <textarea
+                                name="description"
+                                placeholder="Detailed description about the asset"
+                                value={form.description}
+                                onChange={handleChange}
+                                required
+                            />
 
-                        <textarea
-                            name="description"
-                            placeholder="Detailed description about the asset"
-                            value={form.description}
-                            onChange={handleChange}
-                            required
-                        />
+                            <input type="file" onChange={handleImageUpload} />
 
-                        <input type="file" onChange={handleImageUpload} />
-
-                        <p
-                            className="procurement-toggle"
-                            onClick={() => setProcurementMode(false)}
-                        >
-                            Back to existing asset selection
-                        </p>
-                    </div>
-                )}
+                            <p
+                                className="procurement-toggle"
+                                onClick={() => setProcurementMode(false)}
+                            >
+                                Back to existing asset selection
+                            </p>
+                        </div>
+                    )
+                }
 
                 <button
                     type="submit"
@@ -757,7 +981,7 @@ function Request() {
                     {loading ? "Submitting…" : "Submit Request"}
                 </button>
 
-            </form>
+            </form >
 
             {previewImage && (
                 <div
@@ -780,7 +1004,7 @@ function Request() {
                 </div>
             )}
 
-        </div>
+        </div >
     );
 }
 

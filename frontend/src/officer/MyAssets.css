@@ -32,7 +32,7 @@
     left: 50%;
     flex: 1;
     text-align: center;
-    font-size: 1.75rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #0f172a;
     display: flex;
@@ -55,6 +55,7 @@
         position: static;
         transform: none;
         width: 100%;
+        font-size: 2rem;
         text-align: center;
     }
 

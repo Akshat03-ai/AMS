@@ -1567,13 +1567,16 @@ app.post(
       // Generate inventory_id
       const inventory_id = `INV-${req.user.office_id}-${Date.now()}`;
 
+      const finalStatus = status || "Available";
+      const finalCondition = condition || "Good";
+
       // Check for same asset + same status + same condition in same office (merge rule)
       const existingSnap = await db
         .collection("inventory")
         .where("asset_id", "==", asset_id)
         .where("office_id", "==", req.user.office_id)
-        .where("status", "==", status)
-        .where("condition", "==", condition)
+        .where("status", "==", finalStatus)
+        .where("condition", "==", finalCondition)
         .limit(1)
         .get();
 
@@ -1597,7 +1600,7 @@ app.post(
           user_role: req.user.role,
           office_id: req.user.office_id,
           uid: req.user.uid,
-          remarks: `Inventory merged: ${asset_id} (${status}, ${condition}) qty ${prevQty} + ${quantity} = ${prevQty + Number(quantity)} by ${req.user.name} (${req.user.role})`,
+          remarks: `Inventory merged: ${asset_id} (${finalStatus}, ${finalCondition}) qty ${prevQty} + ${quantity} = ${prevQty + Number(quantity)} by ${req.user.name} (${req.user.role})`,
           timestamp: new Date(),
         });
 
@@ -1609,8 +1612,8 @@ app.post(
         inventory_id,
         asset_id,
         quantity: Number(quantity),
-        status,
-        condition,
+        status: finalStatus,
+        condition: finalCondition,
         office_id: req.user.office_id,
         department_id: req.user.department_id,
         created_at: new Date(),
@@ -2534,67 +2537,34 @@ app.post(
         return res.status(403).json({ message: "Officer does not belong to your office" });
       }
 
-      // ==========================================
-      // 2. CHECK FOR EXISTING ASSIGNMENT TO MERGE
-      // ==========================================
-      const existingSnap = await db
-        .collection("asset_assignments")
-        .where("inventory_id", "==", inventory_id)
-        .where("assigned_to", "==", final_assigned_to) // 👈 ONLY check this user
-        .where("returned_date", "==", null)
-        .limit(1)
-        .get();
-
-      let assignment_id;
+      // 🆕 CREATE NEW
+      const assignment_id = `ASN-${Date.now()}`;
       const finalAssignedDate = assigned_date ? new Date(assigned_date) : new Date();
       const finalReturnedDate = returned_date ? new Date(returned_date) : null;
 
-      if (
-        !existingSnap.empty &&
-        (!serial_numbers || serial_numbers.length === 0) &&
-        !(existingData.serial_numbers && existingData.serial_numbers.length > 0)
-      ) {
-        // 🔥 MERGE INTO EXISTING
-        const existingDoc = existingSnap.docs[0];
-        const existingData = existingDoc.data();
-        assignment_id = existingData.assignment_id;
-
-        const updatedQty = Number(existingData.quantity) + Number(quantity);
-
-        const updatedSerials = [
-          ...(existingData.serial_numbers || []),
-          ...(serial_numbers || [])
-        ];
-
-        await existingDoc.ref.update({
-          quantity: updatedQty,
-          serial_numbers: updatedSerials, // 👈 ADD THIS
-        });
-
-      } else {
-        // 🆕 CREATE NEW
-        assignment_id = `ASN-${Date.now()}`;
-
-        await db.collection("asset_assignments").add({
-          assignment_id,
-          inventory_id,
-          asset_id: inventoryData.asset_id,
-          quantity: Number(quantity),
-          serial_numbers: serial_numbers || [],
-          assigned_to: final_assigned_to,
-          assigned_uid: assigned_uid,
-          assigned_date: finalAssignedDate,
-          returned_date: finalReturnedDate,
-          office_id: req.user.office_id,
-          remarks: remarks || "",
-          created_at: new Date(),
-        });
-      }
+      await db.collection("asset_assignments").add({
+        assignment_id,
+        inventory_id,
+        asset_id: inventoryData.asset_id,
+        quantity: Number(quantity),
+        serial_numbers: serial_numbers || [],
+        assigned_to: final_assigned_to,
+        assigned_uid: assigned_uid,
+        assigned_date: finalAssignedDate,
+        returned_date: finalReturnedDate,
+        office_id: req.user.office_id,
+        remarks: remarks || "",
+        created_at: new Date(),
+      });
 
       // ==========================================
       // 3. DEDUCT FROM INVENTORY
       // ==========================================
       const newQty = Number(inventoryData.quantity) - Number(quantity);
+
+      if (newQty < 0) {
+        return res.status(409).json({ message: "Stock became insufficient" });
+      }
 
       await inventoryDoc.ref.update({
         quantity: newQty,
@@ -2632,7 +2602,7 @@ app.post(
 
       await db.collection("audit_logs").add({
         log_id: `AUD-${Date.now()}`,
-        action_type: existingSnap.empty ? "ASSET_ASSIGNED" : "ASSIGNMENT_MERGED",
+        action_type: "ASSET_ASSIGNED",
         reference_id: assignment_id,
         asset_id: inventoryData.asset_id,
         inventory_id,
@@ -2642,10 +2612,7 @@ app.post(
         uid: req.user.uid,
         previous_location,
         new_location,
-        remarks: existingSnap.empty
-          ? `Asset ${inventoryData.asset_id} (${assetData.asset_name || "Unknown"}) assigned to ${final_assigned_to} by ${req.user.role} ${req.user.name}`
-          : `Added ${quantity} units to existing assignment ${assignment_id} for ${final_assigned_to} by ${req.user.role} ${req.user.name}`,
-        timestamp: new Date(),
+        remarks: `Asset ${inventoryData.asset_id} (${assetData.asset_name || "Unknown"}) assigned to ${final_assigned_to} by ${req.user.role} ${req.user.name}`,
       });
 
       res.json({ message: "Assignment processed successfully" });
@@ -2707,6 +2674,10 @@ app.patch(
         });
       }
 
+      const returnedQty = returnSerials.length > 0
+        ? returnSerials.length
+        : req.body.quantity || data.quantity;
+
       // 🔄 Restore inventory quantity
       const inventorySnap = await db
         .collection("inventory")
@@ -2717,10 +2688,6 @@ app.patch(
       if (!inventorySnap.empty) {
         const inventoryDoc = inventorySnap.docs[0];
         const inventoryData = inventoryDoc.data();
-
-        const returnedQty = returnSerials.length > 0
-          ? returnSerials.length
-          : req.body.quantity || data.quantity;
 
         const newQty =
           Number(inventoryData.quantity || 0) +
@@ -2771,7 +2738,7 @@ app.patch(
         uid: req.user.uid,
         previous_location,
         new_location,
-        remarks: `Returned ${data.quantity} units of ${data.asset_id} by ${req.user.role} ${req.user.name}`,
+        remarks: `Returned ${returnedQty} units of ${data.asset_id} by ${req.user.role} ${req.user.name}`,
         timestamp: new Date(),
       });
 
@@ -3109,6 +3076,7 @@ app.post(
         request_type,
         asset_id,
         assignment_id,
+        assignment_ids,    // NEW
         asset_name,
         asset_category,
         quantity,
@@ -3117,7 +3085,8 @@ app.post(
         description,
         company,
         image_url,
-        serial_numbers
+        serial_numbers = [],
+        no_serial_quantity = 0,
       } = req.body;
 
       const user = req.user;
@@ -3128,11 +3097,31 @@ app.post(
       if (!quantity || quantity < 1)
         return res.status(400).json({ message: "Invalid quantity" });
 
-      let assignmentDoc = null;
       let assetName = null;
 
-      if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
+      let assignmentDocs = [];
 
+      if (assignment_ids && Array.isArray(assignment_ids) && assignment_ids.length > 0) {
+
+        const snaps = await Promise.all(
+          assignment_ids.map(id =>
+            db.collection("asset_assignments")
+              .where("assignment_id", "==", id)
+              .limit(1)
+              .get()
+          )
+        );
+
+        assignmentDocs = snaps
+          .map(s => (s.empty ? null : s.docs[0].data()))
+          .filter(Boolean);
+
+        if (assignmentDocs.length === 0) {
+          return res.status(404).json({ message: "Assignments not found" });
+        }
+
+      } else {
+        // fallback (old system)
         const assignmentSnap = await db
           .collection("asset_assignments")
           .where("assignment_id", "==", assignment_id)
@@ -3142,19 +3131,19 @@ app.post(
         if (assignmentSnap.empty)
           return res.status(404).json({ message: "Assignment not found" });
 
-        assignmentDoc = assignmentSnap.docs[0].data();
+        assignmentDocs = [assignmentSnap.docs[0].data()];
+      }
 
-        /* FETCH ASSET */
+      /* FETCH ASSET */
 
-        const assetSnap = await db
-          .collection("assets")
-          .where("asset_id", "==", assignmentDoc.asset_id)
-          .limit(1)
-          .get();
+      const assetSnap = await db
+        .collection("assets")
+        .where("asset_id", "==", assignmentDocs[0].asset_id)
+        .limit(1)
+        .get();
 
-        if (!assetSnap.empty) {
-          assetName = assetSnap.docs[0].data().asset_name;
-        }
+      if (!assetSnap.empty) {
+        assetName = assetSnap.docs[0].data().asset_name;
       }
 
       if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
@@ -3163,13 +3152,15 @@ app.post(
             return res.status(400).json({ message: "Serial numbers must be array" });
           }
 
-          if (serial_numbers.length !== quantity) {
+          const totalUnits = (serial_numbers?.length || 0) + Number(no_serial_quantity || 0);
+
+          if (totalUnits !== Number(quantity)) {
             return res.status(400).json({
-              message: "Selected serial numbers must match quantity",
+              message: "Serial + non-serial quantity must match total quantity",
             });
           }
 
-          const assignmentSerials = assignmentDoc.serial_numbers || [];
+          const assignmentSerials = assignmentDocs.flatMap(a => a.serial_numbers || []);
 
           const invalid = serial_numbers.filter(sn => !assignmentSerials.includes(sn));
 
@@ -3186,27 +3177,21 @@ app.post(
       // ==========================
       if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
 
-        if (!assignment_id)
-          return res.status(400).json({ message: "Assignment required" });
+        const invalidOwnership = assignmentDocs.some(
+          a => a.assigned_to !== user.user_id
+        );
 
-        const assignmentSnap = await db
-          .collection("asset_assignments")
-          .where("assignment_id", "==", assignment_id)
-          .limit(1)
-          .get();
-
-        if (assignmentSnap.empty)
-          return res.status(404).json({ message: "Assignment not found" });
-
-        assignmentDoc = assignmentSnap.docs[0].data();
-
-        if (assignmentDoc.assigned_to !== user.user_id)
+        if (invalidOwnership)
           return res.status(403).json({ message: "Not your assigned asset" });
 
-        if (assignmentDoc.returned_date)
+        const alreadyReturned = assignmentDocs.some(a => a.returned_date);
+
+        if (alreadyReturned)
           return res.status(400).json({ message: "Asset already returned" });
 
-        if (quantity > assignmentDoc.quantity)
+        const totalQty = assignmentDocs.reduce((sum, a) => sum + (a.quantity || 0), 0);
+
+        if (quantity > totalQty)
           return res.status(400).json({
             message: "Quantity exceeds assigned quantity",
           });
@@ -3215,16 +3200,21 @@ app.post(
       // ==========================
       // PREVENT DUPLICATE REQUEST
       // ==========================
-      if (assignment_id) {
+      if (assignment_ids?.length > 0) {
         const existing = await db
           .collection("Requests")
-          .where("assignment_id", "==", assignment_id)
           .where("request_type", "==", request_type)
+          .where("requested_by", "==", user.user_id)
+          .where("office_id", "==", user.office_id)
           .where("status", "==", "PENDING")
-          .limit(1)
           .get();
 
-        if (!existing.empty) {
+        const alreadyExists = existing.docs.some(doc => {
+          const data = doc.data();
+          return data.assignment_ids?.some(id => assignment_ids.includes(id));
+        });
+
+        if (alreadyExists) {
           return res.status(409).json({
             message: "A pending request already exists for this asset",
           });
@@ -3241,10 +3231,10 @@ app.post(
       // ==========================
       let assetCategory = asset_category;
 
-      if (!assetCategory && assignmentDoc?.asset_id) {
+      if (!assetCategory && assignmentDocs[0]?.asset_id) {
         const assetSnap = await db
           .collection("assets")
-          .where("asset_id", "==", assignmentDoc.asset_id)
+          .where("asset_id", "==", assignmentDocs[0].asset_id)
           .limit(1)
           .get();
 
@@ -3261,16 +3251,19 @@ app.post(
         request_type,
 
         assignment_id: assignment_id || null,
+        assignment_ids: assignment_ids || null, // NEW
 
         asset_name: asset_name || assetName || "Unknown Asset",
-        asset_id: asset_id || assignmentDoc?.asset_id || null,
+        asset_id: asset_id || assignmentDocs[0]?.asset_id || null,
 
         asset_category:
-          asset_category || assignmentDoc?.asset_category || null,
+          asset_category || assignmentDocs[0]?.asset_category || null,
 
         quantity,
         serial_numbers: serial_numbers || [],
         return_date: return_date || null,
+
+        no_serial_quantity: Number(no_serial_quantity) || 0,
 
         disposal_reason: disposal_reason || null,
 
@@ -3298,7 +3291,7 @@ app.post(
         log_id: generateAuditId(),
         action_type: "REQUEST_CREATED",
         reference_id: request_id,
-        asset_id: assignmentDoc?.asset_id || null,
+        asset_id: assignmentDocs[0]?.asset_id || null,
         office_id: user.office_id,
         previous_location: null,
         new_location: null,
@@ -4554,106 +4547,138 @@ app.patch(
 
         /* ================= RETURN ================= */
         case "RETURN": {
-          const assignmentSnap = await db
-            .collection("asset_assignments")
-            .where("assignment_id", "==", request.assignment_id)
-            .limit(1)
-            .get();
+          let assignmentDocs = [];
 
-          if (assignmentSnap.empty)
-            return res.status(404).json({ message: "Assignment not found" });
+          if (request.assignment_ids && request.assignment_ids.length > 0) {
 
-          const assignmentDoc = assignmentSnap.docs[0];
-          const assignment = assignmentDoc.data();
-
-          const returnQty = Number(request.quantity || 0);
-
-          const returnSerials = request.serial_numbers || [];
-
-          // 🚨 FIX: serial count must match quantity
-          if (returnSerials.length > 0 && returnSerials.length !== returnQty) {
-            return res.status(400).json({
-              message: "Serial count must match quantity"
-            });
-          }
-
-          // 🔒 VALIDATE SERIAL NUMBERS
-          if (returnSerials.length > 0) {
-            const invalid = returnSerials.filter(
-              s => !(assignment.serial_numbers || []).includes(s)
+            const snaps = await Promise.all(
+              request.assignment_ids.map(id =>
+                db.collection("asset_assignments")
+                  .where("assignment_id", "==", id)
+                  .limit(1)
+                  .get()
+              )
             );
 
-            if (invalid.length > 0) {
+            assignmentDocs = snaps
+              .map(s => (s.empty ? null : s.docs[0]))
+              .filter(Boolean);
+
+          } else {
+            const snap = await db
+              .collection("asset_assignments")
+              .where("assignment_id", "==", request.assignment_id)
+              .limit(1)
+              .get();
+
+            if (!snap.empty) assignmentDocs = [snap.docs[0]];
+          }
+
+          if (assignmentDocs.length === 0) {
+            return res.status(404).json({ message: "Assignment not found" });
+          }
+
+          const allSerials = assignmentDocs.flatMap(
+            doc => doc.data().serial_numbers || []
+          );
+
+          const invalid = request.serial_numbers.filter(
+            s => !allSerials.includes(s)
+          );
+
+          if (invalid.length > 0) {
+            return res.status(400).json({
+              message: "Invalid serials in request"
+            });
+          }
+
+          let remainingQty = Number(request.quantity || 0);
+          const returnSerials = request.serial_numbers || [];
+
+          for (const assignmentDoc of assignmentDocs) {
+            const assignment = assignmentDoc.data();
+
+            if (remainingQty <= 0) break;
+
+            const availableQty = Number(assignment.quantity || 0);
+
+            // 🎯 distribute quantity across assignments
+            let actualReturnQty = Math.min(remainingQty, availableQty);
+
+            let serialsToReturn = [];
+
+            if (returnSerials.length > 0) {
+              const assignmentSerials = assignment.serial_numbers || [];
+
+              serialsToReturn = returnSerials.filter(sn =>
+                assignmentSerials.includes(sn)
+              );
+
+              actualReturnQty = serialsToReturn.length;
+            }
+
+            if (actualReturnQty <= 0) continue;
+
+            remainingQty -= actualReturnQty;
+
+            // 🔥 disposal check
+            const disposalSnap = await db
+              .collection("disposals")
+              .where("assignment_id", "==", assignment.assignment_id)
+              .get();
+
+            let disposedQty = 0;
+            disposalSnap.forEach(d => {
+              disposedQty += Number(d.data().quantity || 0);
+            });
+
+            const activeQty = Number(assignment.quantity) - disposedQty;
+
+            if (actualReturnQty > activeQty) {
               return res.status(400).json({
-                message: "Invalid serials in request"
+                message: "Cannot return disposed assets"
               });
             }
+
+            // 🔄 inventory fetch
+            const inventorySnap = await db
+              .collection("inventory")
+              .where("inventory_id", "==", assignment.inventory_id)
+              .limit(1)
+              .get();
+
+            if (inventorySnap.empty)
+              return res.status(404).json({ message: "Inventory not found" });
+
+            const invDoc = inventorySnap.docs[0];
+            const invData = invDoc.data();
+
+            const newAssignmentQty = Number(assignment.quantity) - actualReturnQty;
+            const newInventoryQty = Number(invData.quantity || 0) + actualReturnQty;
+
+            let remainingSerials = assignment.serial_numbers || [];
+
+            if (serialsToReturn.length > 0) {
+              remainingSerials = remainingSerials.filter(
+                s => !serialsToReturn.includes(s)
+              );
+            }
+
+            await db.runTransaction(async (t) => {
+              t.update(assignmentDoc.ref, {
+                quantity: newAssignmentQty,
+                serial_numbers: remainingSerials,
+                returned_date: newAssignmentQty === 0 ? new Date() : null
+              });
+
+              t.update(invDoc.ref, {
+                quantity: newInventoryQty,
+                status: newInventoryQty > 0 ? "Available" : "Unavailable"
+              });
+            });
           }
-
-          if (returnQty <= 0)
-            return res.status(400).json({ message: "Invalid return quantity" });
-
-          // 🔥 Check disposal (prevent returning disposed items)
-          const disposalSnap = await db
-            .collection("disposals")
-            .where("assignment_id", "==", assignment.assignment_id)
-            .get();
-
-          let disposedQty = 0;
-          disposalSnap.forEach(d => {
-            disposedQty += Number(d.data().quantity || 0);
-          });
-
-          const activeQty = Number(assignment.quantity) - disposedQty;
-
-          const actualReturnQty = returnSerials.length > 0
-            ? returnSerials.length
-            : returnQty;
-            
-          if (actualReturnQty > activeQty)
-            return res.status(400).json({
-              message: "Cannot return disposed assets"
-            });
-
-          // 🔄 Inventory fetch
-          const inventorySnap = await db
-            .collection("inventory")
-            .where("inventory_id", "==", assignment.inventory_id)
-            .limit(1)
-            .get();
-
-          if (inventorySnap.empty)
-            return res.status(404).json({ message: "Inventory not found" });
-
-          const invDoc = inventorySnap.docs[0];
-          const invData = invDoc.data();
-
-          const newAssignmentQty = Number(assignment.quantity) - actualReturnQty;
-          const newInventoryQty = Number(invData.quantity || 0) + actualReturnQty;
-
-          // Filter out the returned serial numbers
-          let remainingSerials = assignment.serial_numbers || [];
-
-          if (returnSerials.length > 0) {
-            remainingSerials = remainingSerials.filter(s => !returnSerials.includes(s));
-          }
-
-          // 🔒 TRANSACTION
-          await db.runTransaction(async (t) => {
-            t.update(assignmentDoc.ref, {
-              quantity: newAssignmentQty,
-              serial_numbers: remainingSerials, // 👈 Removes returned serials
-              returned_date: newAssignmentQty === 0 ? new Date() : null
-            });
-
-            t.update(invDoc.ref, {
-              quantity: newInventoryQty,
-              status: newInventoryQty > 0 ? "Available" : "Unavailable"
-            });
-          });
-
-          break;
         }
+          break;
 
         /* ================= REDIRECT TYPES ================= */
         case "ISSUE":
