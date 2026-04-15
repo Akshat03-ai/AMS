@@ -4606,6 +4606,10 @@ app.patch(
 
           const activeQty = Number(assignment.quantity) - disposedQty;
 
+          const actualReturnQty = returnSerials.length > 0
+            ? returnSerials.length
+            : returnQty;
+            
           if (actualReturnQty > activeQty)
             return res.status(400).json({
               message: "Cannot return disposed assets"
@@ -4623,10 +4627,6 @@ app.patch(
 
           const invDoc = inventorySnap.docs[0];
           const invData = invDoc.data();
-
-          const actualReturnQty = returnSerials.length > 0
-            ? returnSerials.length
-            : returnQty;
 
           const newAssignmentQty = Number(assignment.quantity) - actualReturnQty;
           const newInventoryQty = Number(invData.quantity || 0) + actualReturnQty;

@@ -221,7 +221,7 @@ function Request() {
         }));
         setSelectedAssignmentQty(0);
         setProcurementMode(false);
-    }, [form.request_type]);
+    }, [form.request_type, location.state?.autoFill]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
