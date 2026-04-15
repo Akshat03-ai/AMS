@@ -2549,8 +2549,12 @@ app.post(
       const finalAssignedDate = assigned_date ? new Date(assigned_date) : new Date();
       const finalReturnedDate = returned_date ? new Date(returned_date) : null;
 
-      if (!existingSnap.empty && (!serial_numbers || serial_numbers.length === 0)) {
-        // 🔥 MERGE INTO EXISTING IF NO SERIAL NUMBERS
+      if (
+        !existingSnap.empty &&
+        (!serial_numbers || serial_numbers.length === 0) &&
+        !(existingData.serial_numbers && existingData.serial_numbers.length > 0)
+      ) {
+        // 🔥 MERGE INTO EXISTING
         const existingDoc = existingSnap.docs[0];
         const existingData = existingDoc.data();
         assignment_id = existingData.assignment_id;
@@ -2716,7 +2720,7 @@ app.patch(
 
         const returnedQty = returnSerials.length > 0
           ? returnSerials.length
-          : data.quantity;
+          : req.body.quantity || data.quantity;
 
         const newQty =
           Number(inventoryData.quantity || 0) +
@@ -3215,6 +3219,7 @@ app.post(
         const existing = await db
           .collection("Requests")
           .where("assignment_id", "==", assignment_id)
+          .where("request_type", "==", request_type)
           .where("status", "==", "PENDING")
           .limit(1)
           .get();
@@ -4244,23 +4249,6 @@ app.post(
       });
 
       // ==========================
-      // 🔥 UPDATE INVENTORY (CRITICAL FIX)
-      // ==========================
-      const inventorySnap = await db
-        .collection("inventory")
-        .where("inventory_id", "==", assignment.inventory_id)
-        .limit(1)
-        .get();
-
-      if (!inventorySnap.empty) {
-        const invDoc = inventorySnap.docs[0];
-        const invData = invDoc.data();
-
-        const updatedQty =
-          Number(invData.quantity || 0) - disposalQty;
-      }
-
-      // ==========================
       // PREVIOUS LOCATION
       // ==========================
       let previous_location = "Unknown";
@@ -4618,7 +4606,7 @@ app.patch(
 
           const activeQty = Number(assignment.quantity) - disposedQty;
 
-          if (returnQty > activeQty)
+          if (actualReturnQty > activeQty)
             return res.status(400).json({
               message: "Cannot return disposed assets"
             });
