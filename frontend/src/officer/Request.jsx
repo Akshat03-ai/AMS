@@ -88,7 +88,7 @@ function Request() {
             else if (assignment_id && assignments.length > 0) {
 
                 const isValidAssignment = assignments.find(
-                    a => a.assignment_id === assignment_id
+                    a => String(a.assignment_id) === String(assignment_id)
                 );
 
                 if (isValidAssignment) {
@@ -413,41 +413,66 @@ function Request() {
                             Max allowed: {selectedAssignmentQty}
                         </small>
 
-                        {selectedAssignment?.serial_numbers?.length === 0 && (
-                            <p>No serial tracking for this asset</p>
+                        {/* NO SERIALS FOUND */}
+                        {(!selectedAssignment?.serial_numbers || selectedAssignment.serial_numbers.length === 0) && (
+                            <div className="serial-empty-state">
+                                <span className="serial-empty-icon">ℹ️</span>
+                                <div className="serial-empty-text">
+                                    <p className="serial-empty-title">No Serial Numbers</p>
+                                    <p className="serial-empty-desc">This asset does not require individual serial tracking.</p>
+                                </div>
+                            </div>
                         )}
 
                         {Array.isArray(selectedAssignment?.serial_numbers) &&
                             selectedAssignment.serial_numbers.length > 0 && (
-                                <div>
-                                    <h4>Select Serial Numbers</h4>
+                                <div className="serial-wrapper">
+                                    <div className="serial-header">
+                                        <h4>Select Serial Numbers</h4>
+                                        <span
+                                            className={`serial-counter ${selectedSerials.length === 0
+                                                    ? "danger"
+                                                    : selectedSerials.length === Number(form.quantity)
+                                                        ? "success"
+                                                        : "warning"
+                                                }`}
+                                        >
+                                            Selected: {selectedSerials.length} / {form.quantity}
+                                        </span>
+                                    </div>
 
-                                    {selectedAssignment.serial_numbers.map((sn, index) => {
-                                        const isChecked = selectedSerials.includes(sn);
-                                        const isDisabled =
-                                            !isChecked && selectedSerials.length >= form.quantity;
+                                    <div className="serial-grid">
+                                        {selectedAssignment.serial_numbers.map((sn, index) => {
+                                            const isChecked = selectedSerials.includes(sn);
+                                            const isDisabled =
+                                                !isChecked && selectedSerials.length >= form.quantity;
 
-                                        return (
-                                            <label key={index} style={{ display: "block", marginBottom: "5px" }}>
-                                                <input
-                                                    type="checkbox"
-                                                    value={sn}
-                                                    checked={isChecked}
-                                                    disabled={isDisabled}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setSelectedSerials((prev) => [...prev, sn]);
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`serial-card ${isChecked ? "selected" : ""} ${isDisabled ? "disabled" : ""}`}
+                                                    onClick={() => {
+                                                        if (isDisabled) return;
+
+                                                        if (isChecked) {
+                                                            setSelectedSerials(prev => prev.filter(s => s !== sn));
                                                         } else {
-                                                            setSelectedSerials((prev) =>
-                                                                prev.filter((s) => s !== sn)
-                                                            );
+                                                            setSelectedSerials(prev => [...prev, sn]);
                                                         }
                                                     }}
-                                                />
-                                                {sn}
-                                            </label>
-                                        );
-                                    })}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isChecked}
+                                                        disabled={isDisabled}
+                                                        onChange={() => { }} // handled by div click
+                                                    />
+
+                                                    <span className="serial-text">{sn}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             )}
 

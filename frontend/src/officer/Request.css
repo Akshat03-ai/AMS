@@ -372,3 +372,181 @@
         transform: scale(1);
     }
 }
+
+/* ===============================
+   SERIAL NUMBERS (MODERN UI)
+================================= */
+.serial-wrapper {
+    margin-top: 14px;
+    padding: 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    height: max-content;
+}
+
+.serial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.serial-wrapper h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* 🔑 Base counter layout */
+.serial-counter {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* 🔴 Danger State (0 Selected) */
+.serial-counter.danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+/* 🟡 Warning State (In Progress) */
+.serial-counter.warning {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+/* 🟢 Success State (Fully Selected) */
+.serial-counter.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.serial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.serial-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.serial-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.serial-grid::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.serial-grid::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.serial-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.serial-card:hover:not(.disabled) {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1);
+}
+
+.serial-card input[type="checkbox"] {
+    pointer-events: none;
+    width: 14px;
+    height: 14px;
+    accent-color: #2563eb;
+    margin: 0;
+}
+
+.serial-text {
+    font-size: 0.8rem;
+    color: #4b5563;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- SELECTED STATE --- */
+.serial-card.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+.serial-card.selected .serial-text {
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+/* --- DISABLED STATE --- */
+.serial-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    box-shadow: none;
+}
+
+
+
+/* ===============================
+   NO SERIAL TRACKING STATE
+================================= */
+.serial-empty-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    padding: 16px;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.serial-empty-icon {
+    font-size: 1.5rem;
+}
+
+.serial-empty-text p {
+    margin: 0;
+}
+
+.serial-empty-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.serial-empty-desc {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 2px;
+}
