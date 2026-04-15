@@ -2549,8 +2549,8 @@ app.post(
       const finalAssignedDate = assigned_date ? new Date(assigned_date) : new Date();
       const finalReturnedDate = returned_date ? new Date(returned_date) : null;
 
-      if (!existingSnap.empty) {
-        // 🔥 MERGE INTO EXISTING
+      if (!existingSnap.empty && (!serial_numbers || serial_numbers.length === 0)) {
+        // 🔥 MERGE INTO EXISTING IF NO SERIAL NUMBERS
         const existingDoc = existingSnap.docs[0];
         const existingData = existingDoc.data();
         assignment_id = existingData.assignment_id;
@@ -2565,13 +2565,6 @@ app.post(
         await existingDoc.ref.update({
           quantity: updatedQty,
           serial_numbers: updatedSerials, // 👈 ADD THIS
-        });
-        const addedRemarks = existingData.remarks
-          ? `${existingData.remarks} | Added ${quantity} on ${new Date().toLocaleDateString()}`
-          : `Added ${quantity} units on ${new Date().toLocaleDateString()}`;
-
-        await existingDoc.ref.update({
-          quantity: updatedQty,
         });
 
       } else {
@@ -2710,11 +2703,6 @@ app.patch(
         });
       }
 
-      // 🔄 Update assignment
-      await ref.update({
-        returned_date: new Date(),
-      });
-
       // 🔄 Restore inventory quantity
       const inventorySnap = await db
         .collection("inventory")
@@ -2726,9 +2714,13 @@ app.patch(
         const inventoryDoc = inventorySnap.docs[0];
         const inventoryData = inventoryDoc.data();
 
+        const returnedQty = returnSerials.length > 0
+          ? returnSerials.length
+          : data.quantity;
+
         const newQty =
           Number(inventoryData.quantity || 0) +
-          Number(data.quantity || 0);
+          Number(returnedQty);
 
         await inventoryDoc.ref.update({
           quantity: newQty,
@@ -3158,6 +3150,30 @@ app.post(
 
         if (!assetSnap.empty) {
           assetName = assetSnap.docs[0].data().asset_name;
+        }
+      }
+
+      if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
+        if (serial_numbers && serial_numbers.length > 0) {
+          if (!Array.isArray(serial_numbers)) {
+            return res.status(400).json({ message: "Serial numbers must be array" });
+          }
+
+          if (serial_numbers.length !== quantity) {
+            return res.status(400).json({
+              message: "Selected serial numbers must match quantity",
+            });
+          }
+
+          const assignmentSerials = assignmentDoc.serial_numbers || [];
+
+          const invalid = serial_numbers.filter(sn => !assignmentSerials.includes(sn));
+
+          if (invalid.length > 0) {
+            return res.status(400).json({
+              message: "Invalid serial numbers selected",
+            });
+          }
         }
       }
 
@@ -4242,19 +4258,6 @@ app.post(
 
         const updatedQty =
           Number(invData.quantity || 0) - disposalQty;
-
-        if (updatedQty > 0) {
-          await invDoc.ref.update({
-            quantity: updatedQty,
-            status: "Available"
-          });
-        } else {
-          // remove row if zero
-          await invDoc.ref.update({
-            quantity: 0,
-            status: "Unavailable"
-          });
-        }
       }
 
       // ==========================
@@ -4577,6 +4580,28 @@ app.patch(
 
           const returnQty = Number(request.quantity || 0);
 
+          const returnSerials = request.serial_numbers || [];
+
+          // 🚨 FIX: serial count must match quantity
+          if (returnSerials.length > 0 && returnSerials.length !== returnQty) {
+            return res.status(400).json({
+              message: "Serial count must match quantity"
+            });
+          }
+
+          // 🔒 VALIDATE SERIAL NUMBERS
+          if (returnSerials.length > 0) {
+            const invalid = returnSerials.filter(
+              s => !(assignment.serial_numbers || []).includes(s)
+            );
+
+            if (invalid.length > 0) {
+              return res.status(400).json({
+                message: "Invalid serials in request"
+              });
+            }
+          }
+
           if (returnQty <= 0)
             return res.status(400).json({ message: "Invalid return quantity" });
 
@@ -4611,12 +4636,14 @@ app.patch(
           const invDoc = inventorySnap.docs[0];
           const invData = invDoc.data();
 
-          // ... inside the RETURN case ...
-          const newAssignmentQty = Number(assignment.quantity) - returnQty;
-          const newInventoryQty = Number(invData.quantity || 0) + returnQty;
+          const actualReturnQty = returnSerials.length > 0
+            ? returnSerials.length
+            : returnQty;
+
+          const newAssignmentQty = Number(assignment.quantity) - actualReturnQty;
+          const newInventoryQty = Number(invData.quantity || 0) + actualReturnQty;
 
           // Filter out the returned serial numbers
-          const returnSerials = request.serial_numbers || [];
           let remainingSerials = assignment.serial_numbers || [];
 
           if (returnSerials.length > 0) {

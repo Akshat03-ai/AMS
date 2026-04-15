@@ -26,6 +26,8 @@ function Request() {
 
     const [previewImage, setPreviewImage] = useState(null);
     const [selectedAssignmentQty, setSelectedAssignmentQty] = useState(0);
+    const [selectedAssignment, setSelectedAssignment] = useState(null);
+    const [selectedSerials, setSelectedSerials] = useState([]);
     const [assignments, setAssignments] = useState([]);
     const [assets, setAssets] = useState([]);
     const [filteredAssets, setFilteredAssets] = useState([]);
@@ -63,6 +65,11 @@ function Request() {
     }, []);
 
 
+    const handleAssignmentChange = (assignment) => {
+        setSelectedAssignment(assignment);
+        setSelectedSerials([]); // reset previous selections
+    };
+
     /* ================= AUTO-FILL FROM MY ASSETS ================= */
     useEffect(() => {
         if (location.state?.autoFill) {
@@ -93,6 +100,7 @@ function Request() {
                     }));
 
                     setSelectedAssignmentQty(max_qty);
+                    handleAssignmentChange(isValidAssignment);
                 }
             }
 
@@ -181,16 +189,15 @@ function Request() {
 
             if (selected) {
                 const qty = selected.quantity || selected.assigned_quantity || 1;
-                setSelectedAssignmentQty(qty);
 
-                // 🚀 NEW: Auto-grab the serials from the backend data
-                const availableSerials = selected.serial_numbers || [];
+                setSelectedAssignmentQty(qty);
+                handleAssignmentChange(selected);
 
                 setForm((prev) => ({
                     ...prev,
                     assignment_id: value,
                     quantity: 1,
-                    serial_numbers: availableSerials.slice(0, 1) // Auto-fills the first box
+                    serial_numbers: []
                 }));
             }
         }
@@ -242,10 +249,17 @@ function Request() {
             const finalType =
                 procurementMode ? "PROCUREMENT" : form.request_type;
 
+
+            if (selectedSerials.length !== form.quantity) {
+                setLoading(false);
+                alert("Select exactly " + form.quantity + " serial numbers");
+                return;
+            }
+
             const payload = {
                 ...form,
                 request_type: finalType,
-                serial_numbers: form.serial_numbers || [],
+                serial_numbers: selectedSerials,
                 asset_category:
                     form.asset_category === "Others"
                         ? form.custom_category
@@ -380,18 +394,62 @@ function Request() {
 
                         <input
                             type="number"
-                            name="quantity"
                             min="1"
-                            max={selectedAssignmentQty}
+                            max={selectedAssignmentQty || 1}
                             value={form.quantity}
-                            onChange={handleChange}
-                            disabled={!form.assignment_id}
-                            required
+                            onChange={(e) => {
+                                const val = Number(e.target.value);
+
+                                setForm(prev => ({
+                                    ...prev,
+                                    quantity: val
+                                }));
+
+                                setSelectedSerials((prev) => prev.slice(0, val));
+                            }}
                         />
 
                         <small className="quantity-hint">
                             Max allowed: {selectedAssignmentQty}
                         </small>
+
+                        {selectedAssignment?.serial_numbers?.length === 0 && (
+                            <p>No serial tracking for this asset</p>
+                        )}
+
+                        {Array.isArray(selectedAssignment?.serial_numbers) &&
+                            selectedAssignment.serial_numbers.length > 0 && (
+                                <div>
+                                    <h4>Select Serial Numbers</h4>
+
+                                    {selectedAssignment.serial_numbers.map((sn, index) => {
+                                        const isChecked = selectedSerials.includes(sn);
+                                        const isDisabled =
+                                            !isChecked && selectedSerials.length >= form.quantity;
+
+                                        return (
+                                            <label key={index} style={{ display: "block", marginBottom: "5px" }}>
+                                                <input
+                                                    type="checkbox"
+                                                    value={sn}
+                                                    checked={isChecked}
+                                                    disabled={isDisabled}
+                                                    onChange={(e) => {
+                                                        if (e.target.checked) {
+                                                            setSelectedSerials((prev) => [...prev, sn]);
+                                                        } else {
+                                                            setSelectedSerials((prev) =>
+                                                                prev.filter((s) => s !== sn)
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                                {sn}
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            )}
 
                         <input
                             type="date"
