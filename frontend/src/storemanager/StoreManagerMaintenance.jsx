@@ -117,8 +117,48 @@ function StoreManagerMaintenance() {
   const handleSubmit = async (mode) => {
     const token = await getAuth().currentUser.getIdToken();
 
+    // ================================
+    // WORKER MODE
+    // ================================
+    if (mode === "worker") {
+      if (!form.worker_name) {
+        alert("Worker name is required");
+        return;
+      }
+
+      const isEdit = form.worker_id;
+      const url = isEdit
+        ? `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/maintenance/workers/${form.worker_id}`
+        : `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/maintenance/workers`;
+
+      const method = isEdit ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(form)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        alert(errData.message || "Failed to save worker record.");
+        return;
+      }
+
+      alert("Worker saved successfully ✅");
+      setForm({});
+      setShowWorkerModal(false);
+      fetchData();
+      return;
+    }
+
+    // ================================
+    // MAINTENANCE MODE
+    // ================================
     if (mode === "maintenance") {
-      // Safety Check
       if (!form.assignment_id) {
         alert("Error: Missing Asset Assignment. Please select an asset.");
         return;
@@ -140,71 +180,35 @@ function StoreManagerMaintenance() {
         body: JSON.stringify(form)
       });
 
-      // 🚨 THIS IS THE CRITICAL FIX: Stop if the database fails!
       if (!mainRes.ok) {
         const errData = await mainRes.json();
         alert(errData.message || "Failed to save maintenance record.");
-        return; // Prevents auto-approval!
-      }
-    }
-
-    if (mode === "maintenance") {
-      // 1. Frontend Safety Check
-      if (!form.assignment_id) {
-        alert("Error: Missing Assignment ID. This asset cannot be sent to maintenance.");
         return;
       }
 
-      const isEdit = form.maintenance_id;
-      const url = isEdit
-        ? `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/maintenance/${form.maintenance_id}`
-        : `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/maintenance`;
-
-      const method = isEdit ? "PATCH" : "POST";
-
-      const mainRes = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
-
-      // 👈 🚨 CRITICAL FIX: Stop execution if the database write fails!
-      if (!mainRes.ok) {
-        const errData = await mainRes.json();
-        alert(errData.message || "Failed to create maintenance record in the database.");
-        return;
-      }
-    }
-
-    // 2. ONLY approve the request if the above database writes were 100% successful
-    if (form?.request_id) {
-      const reqRes = await fetch(
-        `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/requests/${form.request_id}/approve`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`
+      if (form?.request_id) {
+        const reqRes = await fetch(
+          `${process.env.REACT_APP_API_BASE || "http://localhost:5000"}/api/store-manager/requests/${form.request_id}/approve`,
+          {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` }
           }
-        }
-      );
+        );
 
-      if (!reqRes.ok) {
-        console.error("Failed to mark request as approved.");
+        if (!reqRes.ok) {
+          console.error("Failed to mark request as approved.");
+        }
+      }
+
+      alert("Maintenance record processed successfully ✅");
+      setForm({});
+      setShowMaintenanceModal(false);
+      fetchData();
+
+      if (form?.request_id) {
+        navigate("/store-manager/requests");
       }
     }
-
-    alert("Request processed successfully ✅");
-
-    setForm({});
-    setShowMaintenanceModal(false);
-    setShowWorkerModal(false);
-
-    fetchData();
-
-    navigate("/store-manager/requests");
   };
 
   const deleteMaintenance = async (id) => {

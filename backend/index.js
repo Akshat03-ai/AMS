@@ -3100,7 +3100,6 @@ app.post(
       let assetName = null;
       let assignmentDocs = [];
 
-      // 🛠️ THE FIX: Only attempt to fetch an assignment if the request actually requires one!
       if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
 
         if (assignment_ids && Array.isArray(assignment_ids) && assignment_ids.length > 0) {

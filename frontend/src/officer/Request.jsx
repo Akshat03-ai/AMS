@@ -282,7 +282,6 @@ function Request() {
             const finalType =
                 procurementMode ? "PROCUREMENT" : form.request_type;
 
-
             const totalSelected = selectedSerials.length + noSerialQty;
 
             if (
