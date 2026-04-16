@@ -3098,52 +3098,55 @@ app.post(
         return res.status(400).json({ message: "Invalid quantity" });
 
       let assetName = null;
-
       let assignmentDocs = [];
 
-      if (assignment_ids && Array.isArray(assignment_ids) && assignment_ids.length > 0) {
+      // 🛠️ THE FIX: Only attempt to fetch an assignment if the request actually requires one!
+      if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {
 
-        const snaps = await Promise.all(
-          assignment_ids.map(id =>
-            db.collection("asset_assignments")
-              .where("assignment_id", "==", id)
-              .limit(1)
-              .get()
-          )
-        );
+        if (assignment_ids && Array.isArray(assignment_ids) && assignment_ids.length > 0) {
+          const snaps = await Promise.all(
+            assignment_ids.map(id =>
+              db.collection("asset_assignments")
+                .where("assignment_id", "==", id)
+                .limit(1)
+                .get()
+            )
+          );
 
-        assignmentDocs = snaps
-          .map(s => (s.empty ? null : s.docs[0].data()))
-          .filter(Boolean);
+          assignmentDocs = snaps
+            .map(s => (s.empty ? null : s.docs[0].data()))
+            .filter(Boolean);
 
-        if (assignmentDocs.length === 0) {
-          return res.status(404).json({ message: "Assignments not found" });
+          if (assignmentDocs.length === 0) {
+            return res.status(404).json({ message: "Assignments not found" });
+          }
+
+        } else if (assignment_id) {
+          // fallback (old system)
+          const assignmentSnap = await db
+            .collection("asset_assignments")
+            .where("assignment_id", "==", assignment_id)
+            .limit(1)
+            .get();
+
+          if (assignmentSnap.empty)
+            return res.status(404).json({ message: "Assignment not found" });
+
+          assignmentDocs = [assignmentSnap.docs[0].data()];
+        } else {
+          return res.status(400).json({ message: "Assignment ID is required for this request" });
         }
 
-      } else {
-        // fallback (old system)
-        const assignmentSnap = await db
-          .collection("asset_assignments")
-          .where("assignment_id", "==", assignment_id)
+        /* FETCH ASSET NAME FROM ASSIGNMENT */
+        const assetSnap = await db
+          .collection("assets")
+          .where("asset_id", "==", assignmentDocs[0].asset_id)
           .limit(1)
           .get();
 
-        if (assignmentSnap.empty)
-          return res.status(404).json({ message: "Assignment not found" });
-
-        assignmentDocs = [assignmentSnap.docs[0].data()];
-      }
-
-      /* FETCH ASSET */
-
-      const assetSnap = await db
-        .collection("assets")
-        .where("asset_id", "==", assignmentDocs[0].asset_id)
-        .limit(1)
-        .get();
-
-      if (!assetSnap.empty) {
-        assetName = assetSnap.docs[0].data().asset_name;
+        if (!assetSnap.empty) {
+          assetName = assetSnap.docs[0].data().asset_name;
+        }
       }
 
       if (["RETURN", "MAINTENANCE", "DISPOSAL"].includes(request_type)) {

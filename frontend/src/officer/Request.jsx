@@ -297,7 +297,7 @@ function Request() {
             const payload = {
                 ...form,
                 assignment_id: null,
-                assignment_ids: JSON.parse(form.assignment_id),
+                assignment_ids: form.assignment_id ? JSON.parse(form.assignment_id) : null,
                 request_type: finalType,
                 serial_numbers: selectedSerials,
                 no_serial_quantity: Number(noSerialQty) || 0,
@@ -476,10 +476,10 @@ function Request() {
                                         <h4>Select Serial Numbers</h4>
                                         <span
                                             className={`serial-counter ${(selectedSerials.length + noSerialQty) === 0
-                                                    ? "danger"
-                                                    : (selectedSerials.length + noSerialQty) === Number(form.quantity)
-                                                        ? "success"
-                                                        : "warning"
+                                                ? "danger"
+                                                : (selectedSerials.length + noSerialQty) === Number(form.quantity)
+                                                    ? "success"
+                                                    : "warning"
                                                 }`}
                                         >
                                             Selected: {selectedSerials.length + noSerialQty} / {form.quantity}

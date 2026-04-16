@@ -292,10 +292,10 @@ function Requests() {
                                 <p><strong>Room:</strong> {req.room_id || "N/A"}</p>
 
                                 {req.serial_count > 0 && (
-                                    <div>Serial Units: {req.serial_count}</div>
+                                    <p><strong>Serial Units:</strong> {req.serial_count}</p>
                                 )}
                                 {req.no_serial_quantity > 0 && (
-                                    <div>Bulk Units: {req.no_serial_quantity}</div>
+                                    <p><strong>Bulk Units:</strong> {req.no_serial_quantity}</p>
                                 )}
 
                                 {req.serial_numbers && req.serial_numbers.length > 0 && (
