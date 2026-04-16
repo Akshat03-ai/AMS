@@ -3384,7 +3384,13 @@ app.get(
           ...data,
           id: doc.id,
           officer_name: officerInfo.name,
-          room_id: officerInfo.room
+          room_id: officerInfo.room,
+
+          serial_count: data.serial_numbers?.length || 0,
+          no_serial_quantity: data.no_serial_quantity || 0,
+          total_units:
+            (data.serial_numbers?.length || 0) +
+            (data.no_serial_quantity || 0),
         });
       });
 

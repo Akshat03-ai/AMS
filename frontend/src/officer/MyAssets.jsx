@@ -203,113 +203,117 @@ function MyAssets() {
                     </p>
                 ) : (
                     <div className="table-scroll">
-                    <table className="myassets-table">
-                        <thead>
-                            <tr>
-                                <th>Asset</th>
-                                <th>Image</th>
-                                <th>Category</th>
-                                <th>Company</th>
-                                <th>Quantity</th>
-                                <th>Condition</th>
-                                <th>Assigned Date</th>
-                                <th>Status</th>
-                                <th>Returned Date</th>
-                            </tr>
-                        </thead>
+                        <table className="myassets-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Image</th>
+                                    <th>Category</th>
+                                    <th>Company</th>
+                                    <th>Quantity</th>
+                                    <th>Condition</th>
+                                    <th>Assigned Date</th>
+                                    <th>Status</th>
+                                    <th>Returned Date</th>
+                                </tr>
+                            </thead>
 
-                        <tbody>
-                            {processedAssets.map((a) => {
-                                const totalQty = a.quantity || 0;
-                                const disposedQty = a.disposed_quantity || 0;
-                                const maintenanceQty = a.maintenance_quantity || 0;
+                            <tbody>
+                                {processedAssets.map((a) => {
+                                    const totalQty = a.quantity || 0;
+                                    const disposedQty = a.disposed_quantity || 0;
+                                    const maintenanceQty = a.maintenance_quantity || 0;
 
-                                // 🔥 THE FIX: Math.max ensures we never get a negative number here
-                                let activeQty = a.returned_date ? 0 : Math.max(0, totalQty - maintenanceQty - disposedQty);
+                                    // 🔥 THE FIX: Math.max ensures we never get a negative number here
+                                    let activeQty = a.returned_date ? 0 : Math.max(0, totalQty - maintenanceQty - disposedQty);
 
-                                return (
-                                    <tr key={a.assignment_id}>
-                                        <td>{a.asset_name}</td>
-                                        <td>
-                                            {a.asset_photo_url ? (
-                                                <img
-                                                    src={a.asset_photo_url}
-                                                    alt={a.asset_name}
-                                                    onClick={() => setPreviewAsset(a)}
-                                                    className="clickable-thumb"
-                                                />
-                                            ) : "No Image"}
-                                        </td>
-                                        <td>{a.asset_category}</td>
-                                        <td>{a.asset_company}</td>
-                                        <td>
-                                            {a.returned_date ? `${totalQty} Returned` :
-                                                [
-                                                    activeQty > 0 && `${activeQty} Active`,
-                                                    maintenanceQty > 0 && `${maintenanceQty} Maintenance`,
-                                                    disposedQty > 0 && `${disposedQty} Disposed`
-                                                ].filter(Boolean).join(" / ")
-                                            }
-                                        </td>
-                                        <td>{a.condition}</td>
-                                        <td>
-                                            {a.assigned_date ? new Date(a.assigned_date).toLocaleString("en-IN", {
-                                                dateStyle: "medium", timeStyle: "medium"
-                                            }) : "-"}
-                                        </td>
+                                    return (
+                                        <tr key={a.assignment_id}>
+                                            <td>{a.asset_name}</td>
+                                            <td>
+                                                {a.asset_photo_url ? (
+                                                    <img
+                                                        src={a.asset_photo_url}
+                                                        alt={a.asset_name}
+                                                        onClick={() => setPreviewAsset(a)}
+                                                        className="clickable-thumb"
+                                                    />
+                                                ) : "No Image"}
+                                            </td>
+                                            <td>{a.asset_category}</td>
+                                            <td>{a.asset_company}</td>
+                                            <td>
+                                                {a.returned_date ? `${totalQty} Returned` :
+                                                    [
+                                                        activeQty > 0 && `${activeQty} Active`,
+                                                        maintenanceQty > 0 && `${maintenanceQty} Maintenance`,
+                                                        disposedQty > 0 && `${disposedQty} Disposed`
+                                                    ].filter(Boolean).join(" / ")
+                                                }
+                                            </td>
+                                            <td>{a.condition}</td>
+                                            <td>
+                                                {a.assigned_date ? new Date(a.assigned_date).toLocaleString("en-IN", {
+                                                    dateStyle: "medium", timeStyle: "medium"
+                                                }) : "-"}
+                                            </td>
 
-                                        {/* STATUS COLUMN */}
-                                        <td>
-                                            {a.returned_date ? (
-                                                <span className="status-badge returned">Returned</span>
-                                            ) : (activeQty <= 0 && disposedQty > 0) ? ( // Use <= 0 to be completely safe
-                                                <span className="status-badge disposed">Disposed</span>
-                                            ) : maintenanceQty > 0 ? (
-                                                <span className="status-badge maintenance">Under Maintenance</span>
-                                            ) : (disposedQty > 0 && activeQty > 0) ? (
-                                                <span className="status-badge mixed">Active + Disposed</span>
-                                            ) : (
-                                                <span className="status-badge active">Active</span>
-                                            )}
-                                        </td>
+                                            {/* STATUS COLUMN */}
+                                            <td>
+                                                {a.returned_date ? (
+                                                    <span className="status-badge returned">Returned</span>
+                                                ) : (activeQty <= 0 && disposedQty > 0) ? ( // Use <= 0 to be completely safe
+                                                    <span className="status-badge disposed">Disposed</span>
+                                                ) : maintenanceQty > 0 ? (
+                                                    <span className="status-badge maintenance">Under Maintenance</span>
+                                                ) : (disposedQty > 0 && activeQty > 0) ? (
+                                                    <span className="status-badge mixed">Active + Disposed</span>
+                                                ) : (
+                                                    <span className="status-badge active">Active</span>
+                                                )}
+                                            </td>
 
-                                        {/* DATE / ACTION COLUMN */}
-                                        <td>
-                                            {a.returned_date ? (
-                                                <span style={{ color: "green", fontWeight: 600 }}>
-                                                    {new Date(a.returned_date).toLocaleString("en-IN", {
-                                                        dateStyle: "medium", timeStyle: "medium"
-                                                    })}
-                                                </span>
-                                            ) : (activeQty <= 0 && disposedQty > 0) ? (
-                                                <span style={{ color: "#d9534f", fontWeight: 600 }}>
-                                                    {a.disposed_date ?
-                                                        `Disposed: ${new Date(a.disposed_date).toLocaleDateString("en-IN", { dateStyle: "medium" })}`
-                                                        : "Disposed"}
-                                                </span>
-                                            ) : activeQty > 0 ? (
-                                                <button
-                                                    className="request-btn"
-                                                    onClick={() => navigate("/officer/request", {
-                                                        state: {
-                                                            autoFill: true,
-                                                            request_type: "RETURN",
-                                                            assignment_id: a.assignment_id,
-                                                            max_qty: activeQty,
-                                                        },
-                                                    })}
-                                                >
-                                                    Request Return
-                                                </button>
-                                            ) : (
-                                                <span style={{ color: "gray", fontSize: "0.9rem" }}>No active units</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                            {/* DATE / ACTION COLUMN */}
+                                            <td>
+                                                {a.returned_date ? (
+                                                    <span style={{ color: "green", fontWeight: 600 }}>
+                                                        {new Date(a.returned_date).toLocaleString("en-IN", {
+                                                            dateStyle: "medium", timeStyle: "medium"
+                                                        })}
+                                                    </span>
+                                                ) : (activeQty <= 0 && disposedQty > 0) ? (
+                                                    <span style={{ color: "#d9534f", fontWeight: 600 }}>
+                                                        {a.disposed_date ?
+                                                            `Disposed: ${new Date(a.disposed_date).toLocaleDateString("en-IN", { dateStyle: "medium" })}`
+                                                            : "Disposed"}
+                                                    </span>
+                                                ) : activeQty > 0 ? (
+                                                    <button
+                                                        className="request-btn"
+                                                        onClick={() => navigate("/officer/request", {
+                                                            state: {
+                                                                autoFill: true,
+                                                                request_type: "RETURN",
+                                                                assignment_ids: [a.assignment_id],
+                                                                serial_numbers: a.serial_numbers || [],
+                                                                max_qty: activeQty,
+                                                                asset_name: a.asset_name,
+                                                                asset_id: a.asset_id,
+                                                                quantity: activeQty
+                                                            },
+                                                        })}
+                                                    >
+                                                        Request Return
+                                                    </button>
+                                                ) : (
+                                                    <span style={{ color: "gray", fontSize: "0.9rem" }}>No active units</span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 )
             }

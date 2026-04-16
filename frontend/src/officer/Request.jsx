@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -65,17 +65,32 @@ function Request() {
         fetchAssignments();
     }, []);
 
-
-    const handleAssignmentChange = (assignment) => {
-        setSelectedAssignment(assignment);
-        setSelectedSerials([]); // reset previous selections
-    };
+    /* ================= GROUP ASSIGNMENTS BY ASSET NAME ================= */
+    const groupedAssignments = useMemo(() => {
+        return Object.values(
+            assignments.reduce((acc, a) => {
+                if (!acc[a.asset_name]) {
+                    acc[a.asset_name] = {
+                        ...a,
+                        assignment_ids: [a.assignment_id],
+                        serial_numbers: [...(a.serial_numbers || [])],
+                        quantity: a.quantity || 0,
+                    };
+                } else {
+                    acc[a.asset_name].quantity += a.quantity || 0;
+                    acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
+                    acc[a.asset_name].assignment_ids.push(a.assignment_id);
+                }
+                return acc;
+            }, {})
+        );
+    }, [assignments]);
 
     /* ================= AUTO-FILL FROM MY ASSETS ================= */
     useEffect(() => {
         if (location.state?.autoFill) {
 
-            const { request_type, assignment_id, max_qty } = location.state;
+            const { request_type, assignment_ids } = location.state;
 
             // 🔵 CASE 1: ISSUE
             if (request_type === "ISSUE") {
@@ -87,48 +102,30 @@ function Request() {
             }
 
             // 🟢 CASE 2: RETURN
-            else if (request_type === "RETURN" && assignment_id) {
-                if (assignments.length > 0) {
-                    const isValidAssignment = assignments.find(
-                        a => String(a.assignment_id) === String(assignment_id)
+            else if (request_type === "RETURN" && assignment_ids) {
+                if (groupedAssignments.length > 0) {
+
+                    const isValidGroup = groupedAssignments.find(g =>
+                        g.assignment_ids.includes(assignment_ids[0])
                     );
 
-                    if (isValidAssignment) {
+                    if (isValidGroup) {
                         setForm(prev => ({
                             ...prev,
-                            request_type,
-                            assignment_id,
+                            request_type: "RETURN",
+                            assignment_id: JSON.stringify(isValidGroup.assignment_ids),
                             quantity: 1,
-                            asset_name: isValidAssignment.asset_name
+                            asset_name: isValidGroup.asset_name
                         }));
 
-                        setSelectedAssignmentQty(max_qty);
-                        handleAssignmentChange(isValidAssignment);
+                        setSelectedAssignmentQty(isValidGroup.quantity);
+                        setSelectedAssignment({ serial_numbers: isValidGroup.serial_numbers });
                         window.history.replaceState({}, document.title);
                     }
                 }
             }
         }
-    }, [location.state, assignments]);
-
-    /* ================= GROUP ASSIGNMENTS BY ASSET NAME ================= */
-    const groupedAssignments = Object.values(
-        assignments.reduce((acc, a) => {
-            if (!acc[a.asset_name]) {
-                acc[a.asset_name] = {
-                    ...a,
-                    assignment_ids: [a.assignment_id],
-                    serial_numbers: [...(a.serial_numbers || [])],
-                    quantity: a.quantity || 0,
-                };
-            } else {
-                acc[a.asset_name].quantity += a.quantity || 0;
-                acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
-                acc[a.asset_name].assignment_ids.push(a.assignment_id);
-            }
-            return acc;
-        }, {})
-    );
+    }, [location.state, assignments, groupedAssignments]);
 
     /* ================= FETCH ASSET MASTER ================= */
     useEffect(() => {
@@ -478,11 +475,11 @@ function Request() {
                                     <div className="serial-header">
                                         <h4>Select Serial Numbers</h4>
                                         <span
-                                            className={`serial-counter ${selectedSerials.length === 0
-                                                ? "danger"
-                                                : selectedSerials.length === Number(form.quantity)
-                                                    ? "success"
-                                                    : "warning"
+                                            className={`serial-counter ${(selectedSerials.length + noSerialQty) === 0
+                                                    ? "danger"
+                                                    : (selectedSerials.length + noSerialQty) === Number(form.quantity)
+                                                        ? "success"
+                                                        : "warning"
                                                 }`}
                                         >
                                             Selected: {selectedSerials.length + noSerialQty} / {form.quantity}

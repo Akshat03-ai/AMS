@@ -291,6 +291,13 @@ function Requests() {
                                 <p><strong>Requested By:</strong> {req.officer_name || "Unknown"} (ID: {req.requested_by})</p>
                                 <p><strong>Room:</strong> {req.room_id || "N/A"}</p>
 
+                                {req.serial_count > 0 && (
+                                    <div>Serial Units: {req.serial_count}</div>
+                                )}
+                                {req.no_serial_quantity > 0 && (
+                                    <div>Bulk Units: {req.no_serial_quantity}</div>
+                                )}
+
                                 {req.serial_numbers && req.serial_numbers.length > 0 && (
                                     <p><strong>Serial Numbers:</strong> {req.serial_numbers.join(", ")}</p>
                                 )}

@@ -52,6 +52,7 @@
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    pointer-events: auto;
 }
 
 .request-back-btn:hover,
@@ -209,45 +210,50 @@
 }
 
 /* ===============================
-   RESPONSIVE
+   RESPONSIVE (MOBILE FINAL FIX)
 ================================= */
 @media (max-width: 768px) {
-    .create-request-header {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
 
-    .request-header-left,
-    .request-header-right {
-        padding-bottom: 15px;
-        width: 100%;
+    .create-request-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "left right"
+            "center center";
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
     }
 
     .request-header-left {
+        grid-area: left;
         display: flex;
-        width: 100%;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: flex-start;
+        padding-left: 1.2rem;
+        z-index: 2;
     }
 
     .request-header-right {
-        position: absolute;
-        width: 100%;
+        grid-area: right;
         display: flex;
         justify-content: flex-end;
-        pointer-events: none;
+        position: static;
+        padding-right: 1.2rem;
+        z-index: 2;
     }
 
     .request-header-center {
+        grid-area: center;
         position: static;
         transform: none;
         text-align: center;
-        padding-bottom: 10px;
+        width: 100%;
+        pointer-events: none;
     }
 
-    .request-submit-btn {
-        pointer-events: auto;
+    .request-header-center h1 {
+        font-size: 1.7rem;
+        justify-content: center;
     }
 }
 
@@ -408,6 +414,9 @@
     padding: 3px 10px;
     border-radius: 12px;
     transition: all 0.3s ease;
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
 }
 
 /* 🔴 Danger State (0 Selected) */
@@ -521,7 +530,6 @@
 }
 
 .serial-card input[type="checkbox"] {
-    pointer-events: none;
     width: 14px;
     height: 14px;
     accent-color: #2563eb;
