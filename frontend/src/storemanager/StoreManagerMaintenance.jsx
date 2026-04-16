@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./StoreManagerMaintenance.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import Modal from "../components/Modal";
@@ -20,6 +20,32 @@ function StoreManagerMaintenance() {
   const [showWorkerModal, setShowWorkerModal] = useState(false);
   const currentPath = location.pathname;
   const [loading, setLoading] = useState(true);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedSerials, setSelectedSerials] = useState([]);
+  const [noSerialQty, setNoSerialQty] = useState(0);
+
+  // --- GROUP ASSIGNMENTS ---
+  const groupedAssignments = useMemo(() => {
+    return Object.values(
+      assets.reduce((acc, a) => {
+        if (!acc[a.asset_name]) {
+          acc[a.asset_name] = {
+            ...a,
+            assignment_ids: [a.assignment_id],
+            serial_numbers: [...(a.serial_numbers || [])],
+            quantity: a.quantity || 0,
+            maintenance_quantity: a.maintenance_quantity || 0
+          };
+        } else {
+          acc[a.asset_name].quantity += a.quantity || 0;
+          acc[a.asset_name].maintenance_quantity += a.maintenance_quantity || 0;
+          acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
+          acc[a.asset_name].assignment_ids.push(a.assignment_id);
+        }
+        return acc;
+      }, {})
+    );
+  }, [assets]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -101,16 +127,36 @@ function StoreManagerMaintenance() {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    setAssets(await res.json());
+    const data = await res.json();
+    setAssets(data);
+    return data;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setForm(prev => ({ ...prev, [name]: value }));
 
     if (name === "officer_id") {
       fetchAssignments(value);
+      setSelectedAssignment(null);
+      setSelectedSerials([]);
+      setNoSerialQty(0);
+      setForm(prev => ({ ...prev, assignment_id: "", maintenance_quantity: "" }));
+    }
+
+    if (name === "assignment_id") {
+      try {
+        const parsedIds = JSON.parse(value);
+        const group = groupedAssignments.find(g => parsedIds.includes(g.assignment_ids[0]));
+        if (group) {
+          setSelectedAssignment({ serial_numbers: group.serial_numbers });
+          setSelectedSerials([]);
+          setNoSerialQty(0);
+          setForm(prev => ({ ...prev, assignment_id: value, asset_name: group.asset_name }));
+        }
+      } catch (err) {
+        console.error("Parse error on assignment_id");
+      }
     }
   };
 
@@ -159,10 +205,36 @@ function StoreManagerMaintenance() {
     // MAINTENANCE MODE
     // ================================
     if (mode === "maintenance") {
-      if (!form.assignment_id) {
-        alert("Error: Missing Asset Assignment. Please select an asset.");
-        return;
+      if (!form.assignment_id) return alert("Error: Missing Asset Assignment.");
+
+      const qty = Number(form.maintenance_quantity || 0);
+      const finalSerials = form.request_id ? (form.serial_numbers || []) : selectedSerials;
+      const finalNoSerialQty = form.request_id ? (form.no_serial_quantity || 0) : Number(noSerialQty);
+      const totalSelected = finalSerials.length + finalNoSerialQty;
+
+      // Validate manual serial selection
+      if (!form.request_id && selectedAssignment?.serial_numbers?.length > 0 && totalSelected !== qty) {
+        return alert(`Total selected (${totalSelected}) must equal quantity (${qty})`);
       }
+
+      let parsedAssignmentId = null;
+      let parsedAssignmentIds = [];
+      try {
+        parsedAssignmentIds = JSON.parse(form.assignment_id);
+        parsedAssignmentId = parsedAssignmentIds[0];
+      } catch (e) {
+        parsedAssignmentId = form.assignment_id;
+        parsedAssignmentIds = [form.assignment_id];
+      }
+
+      // 🚨 Use THIS payload in your fetch request!
+      const payload = {
+        ...form,
+        assignment_id: parsedAssignmentId,
+        assignment_ids: parsedAssignmentIds,
+        serial_numbers: finalSerials,
+        no_serial_quantity: finalNoSerialQty
+      };
 
       const isEdit = form.maintenance_id;
       const url = isEdit
@@ -177,7 +249,7 @@ function StoreManagerMaintenance() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
 
       if (!mainRes.ok) {
@@ -392,30 +464,35 @@ function StoreManagerMaintenance() {
 
                       <td className="actions">
 
-                        <FiEdit
-                          className="action-icon edit"
-                          onClick={async () => {
-                            const dateForInput = formatDateForInput(m.maintenance_date);
+                        <FiEdit className="action-icon edit" onClick={async () => {
+                          const dateForInput = formatDateForInput(m.maintenance_date);
+                          let assignmentIdVal = m.assignment_id || "";
 
-                            if (m.officer_id) {
-                              await fetchAssignments(m.officer_id);
+                          if (m.officer_id) {
+                            const fetchedAssets = await fetchAssignments(m.officer_id);
+                            const matchedAsset = fetchedAssets.find(a => a.assignment_id === assignmentIdVal);
+                            if (matchedAsset) {
+                              const groupIds = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).map(a => a.assignment_id);
+                              assignmentIdVal = JSON.stringify(groupIds);
+                              const allGroupSerials = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).flatMap(a => a.serial_numbers || []);
+                              setSelectedAssignment({ serial_numbers: allGroupSerials });
                             }
+                          }
 
-                            setForm({
-                              maintenance_id: m.maintenance_id,
-                              officer_id: m.officer_id || "",
-                              assignment_id: m.assignment_id || "",
-                              maintenance_quantity: m.maintenance_quantity || 1,
-                              maintenance_date: dateForInput,
-                              description: m.description || "",
-                              maintenance_cost: m.maintenance_cost || "",
-                              worker_id: m.worker_id || "",
-                              status: m.status || ""
-                            });
-
-                            setShowMaintenanceModal(true);
-                          }}
-                        />
+                          setForm({
+                            maintenance_id: m.maintenance_id,
+                            officer_id: m.officer_id || "",
+                            assignment_id: assignmentIdVal,
+                            asset_name: m.asset_name || "", // 👈 Ensures dropdown shows name
+                            maintenance_quantity: m.maintenance_quantity || 1,
+                            maintenance_date: dateForInput,
+                            description: m.description || "",
+                            maintenance_cost: m.maintenance_cost || "",
+                            worker_id: m.worker_id || "",
+                            status: m.status || ""
+                          });
+                          setShowMaintenanceModal(true);
+                        }} />
 
                         <FiTrash2
                           className="action-icon delete"
@@ -556,27 +633,35 @@ function StoreManagerMaintenance() {
 
             {/* ASSET SELECTION */}
             {form.request_id ? (
-              // Locked view for Request Approvals
               <>
-                <input
-                  type="text"
-                  readOnly
-                  className="disabled-input"
-                  // 👈 UPDATE THIS VALUE PROP
-                  value={form.asset_name || assets.find(a => a.assignment_id === form.assignment_id)?.asset_name || form.assignment_id || "Loading Asset..."}
-                />
+                <input type="text" readOnly className="disabled-input" value={form.asset_name || "Loading Asset..."} />
                 <input type="hidden" name="assignment_id" value={form.assignment_id} />
               </>
             ) : (
-              // Standard Dropdown for Manual Entries
               <select
-                name="assignment_id"
-                value={form.assignment_id || ""}
-                onChange={handleChange}
+                name="asset_name"
+                value={form.asset_name || ""}
+                onChange={(e) => {
+                  const selectedName = e.target.value;
+                  const group = groupedAssignments.find(g => g.asset_name === selectedName);
+                  if (group) {
+                    setSelectedAssignment({ serial_numbers: group.serial_numbers });
+                    setSelectedSerials([]);
+                    setNoSerialQty(0);
+                    setForm(prev => ({
+                      ...prev,
+                      asset_name: selectedName,
+                      assignment_id: JSON.stringify(group.assignment_ids)
+                    }));
+                  } else {
+                    setForm(prev => ({ ...prev, asset_name: "", assignment_id: "" }));
+                    setSelectedAssignment(null);
+                  }
+                }}
               >
                 <option value="">Select Asset</option>
-                {assets.map(a => (
-                  <option key={a.assignment_id} value={a.assignment_id}>
+                {groupedAssignments.map(a => (
+                  <option key={a.asset_name} value={a.asset_name}>
                     {a.asset_name}
                   </option>
                 ))}
@@ -589,8 +674,86 @@ function StoreManagerMaintenance() {
               placeholder="Quantity to send for maintenance"
               min="1"
               value={form.maintenance_quantity || ""}
-              onChange={handleChange}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                setForm(prev => ({ ...prev, maintenance_quantity: val }));
+                setSelectedSerials(prev => prev.slice(0, val));
+                setNoSerialQty(0);
+              }}
+              disabled={!form.assignment_id || form.request_id}
             />
+
+            {/* SERIAL NUMBER UI */}
+            {form.request_id ? (
+              <div className="serial-empty-state">
+                <span className="serial-empty-icon">🔒</span>
+                <div className="serial-empty-text">
+                  <p className="serial-empty-title">Pre-selected by Request</p>
+                  <p className="serial-empty-desc">
+                    Serials: {form.serial_numbers?.length ? form.serial_numbers.join(", ") : "None"} <br />
+                    Bulk Qty: {form.no_serial_quantity || 0}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {(!selectedAssignment?.serial_numbers || selectedAssignment.serial_numbers.length === 0) && form.assignment_id && (
+                  <div className="serial-empty-state">
+                    <span className="serial-empty-icon">ℹ️</span>
+                    <div className="serial-empty-text">
+                      <p className="serial-empty-title">No Serial Numbers</p>
+                      <p className="serial-empty-desc">This asset does not require individual serial tracking.</p>
+                    </div>
+                  </div>
+                )}
+
+                {Array.isArray(selectedAssignment?.serial_numbers) && selectedAssignment.serial_numbers.length > 0 && (
+                  <div className="serial-wrapper">
+                    <div className="serial-header">
+                      <h4>Select Serial Numbers</h4>
+                      <span className={`serial-counter ${(selectedSerials.length + noSerialQty) === 0 ? "danger" : (selectedSerials.length + noSerialQty) === Number(form.maintenance_quantity) ? "success" : "warning"}`}>
+                        Selected: {selectedSerials.length + noSerialQty} / {form.maintenance_quantity || 0}
+                      </span>
+                    </div>
+                    <div className="serial-grid">
+                      {selectedAssignment.serial_numbers.map((sn, index) => {
+                        const isChecked = selectedSerials.includes(sn);
+                        const totalSelected = selectedSerials.length + noSerialQty;
+                        const isDisabled = !isChecked && totalSelected >= Number(form.maintenance_quantity);
+
+                        return (
+                          <div key={index} className={`serial-card ${isChecked ? "selected" : ""} ${isDisabled ? "disabled" : ""}`} onClick={() => {
+                            if (isDisabled) return;
+                            if (isChecked) {
+                              setSelectedSerials(prev => prev.filter(s => s !== sn));
+                            } else {
+                              setSelectedSerials(prev => [...prev, sn]);
+                            }
+                          }}>
+                            <input type="checkbox" checked={isChecked} readOnly />
+                            <span className="serial-text">{sn}</span>
+                          </div>
+                        );
+                      })}
+                      <div className="no-serial-input">
+                        <label>No Serial Quantity</label>
+                        <input
+                          type="number"
+                          min="0"
+                          max={Number(form.maintenance_quantity) - selectedSerials.length}
+                          value={noSerialQty}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            if (val + selectedSerials.length > Number(form.maintenance_quantity)) return;
+                            setNoSerialQty(val);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
 
             <input name="maintenance_date" type="date" value={form.maintenance_date || ""} onChange={handleChange} />
 
