@@ -3553,9 +3553,7 @@ app.post(
   authenticate,
   authorizeRole(["store manager"]),
   async (req, res) => {
-
     try {
-
       const {
         assignment_id,
         maintenance_date,
@@ -3655,21 +3653,13 @@ app.post(
       // AUDIT LOG
       // ==========================
       await db.collection("audit_logs").add({
-
         log_id: generateAuditId(),
-
         action_type: "MAINTENANCE_CREATED",
-
-        asset_id: primaryAssignment.asset_id || null, // 👈 FIXED: Changed 'assignment' to 'primaryAssignment'
-
+        asset_id: primaryAssignment.asset_id || null,
         reference_id: maintenance_id,
-
         office_id: req.user.office_id,
-
         timestamp: new Date(),
-
-        remarks:
-          `Maintenance ${maintenance_id} created for ${asset_name} (qty ${maintenance_quantity || 1}) by ${req.user.role}: ${req.user.name}`
+        remarks: `Maintenance ${maintenance_id} created for ${asset_name} (qty ${maintenance_quantity || 1}) by ${req.user.role}: ${req.user.name}`
       });
 
       res.status(201).json({
@@ -3678,13 +3668,8 @@ app.post(
       });
 
     } catch (err) {
-
       console.error("MAINTENANCE CREATE ERROR:", err);
-
-      res.status(500).json({
-        message: "Failed to create maintenance record"
-      });
-
+      res.status(500).json({ message: "Failed to create maintenance record" });
     }
   }
 );
@@ -4103,7 +4088,6 @@ app.post(
   authorizeRole(["store manager"]),
   async (req, res) => {
     try {
-
       const {
         assignment_id,
         disposal_method,
@@ -4221,17 +4205,6 @@ app.post(
       await db.collection("disposals").add(disposalData);
 
       // ==========================
-      // 🔥 UPDATE ASSIGNMENT
-      // ==========================
-      const newQty = Number(assignment.quantity) - disposalQty;
-      const prevDisposed = Number(assignment.disposed_quantity || 0);
-
-      await assignmentDoc.ref.update({
-        quantity: newQty,
-        disposed_quantity: prevDisposed + disposalQty
-      });
-
-      // ==========================
       // PREVIOUS LOCATION
       // ==========================
       let previous_location = "Unknown";
@@ -4239,13 +4212,13 @@ app.post(
       try {
         const userSnap = await db
           .collection("Users")
-          .where("user_id", "==", primaryAssignment.assigned_to) // 👈 FIXED
+          .where("user_id", "==", primaryAssignment.assigned_to)
           .limit(1)
           .get();
 
         if (!userSnap.empty) {
           const user = userSnap.docs[0].data();
-          previous_location = user.room_id || primaryAssignment.assigned_to; // 👈 FIXED
+          previous_location = user.room_id || primaryAssignment.assigned_to;
         }
       } catch (err) {
         console.error("Location lookup failed:", err);
@@ -4258,7 +4231,7 @@ app.post(
         log_id: generateAuditId(),
         action_type: "ASSET_DISPOSED",
         reference_id: disposal_id,
-        asset_id: primaryAssignment.asset_id, // 👈 FIXED
+        asset_id: primaryAssignment.asset_id,
         office_id: req.user.office_id,
         previous_location,
         new_location: "DISPOSED",
