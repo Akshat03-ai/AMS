@@ -3660,7 +3660,7 @@ app.post(
 
         action_type: "MAINTENANCE_CREATED",
 
-        asset_id: assignment.asset_id || null,
+        asset_id: primaryAssignment.asset_id || null, // 👈 FIXED: Changed 'assignment' to 'primaryAssignment'
 
         reference_id: maintenance_id,
 
@@ -4237,18 +4237,16 @@ app.post(
       let previous_location = "Unknown";
 
       try {
-
         const userSnap = await db
           .collection("Users")
-          .where("user_id", "==", assignment.assigned_to)
+          .where("user_id", "==", primaryAssignment.assigned_to) // 👈 FIXED
           .limit(1)
           .get();
 
         if (!userSnap.empty) {
           const user = userSnap.docs[0].data();
-          previous_location = user.room_id || assignment.assigned_to;
+          previous_location = user.room_id || primaryAssignment.assigned_to; // 👈 FIXED
         }
-
       } catch (err) {
         console.error("Location lookup failed:", err);
       }
@@ -4257,26 +4255,15 @@ app.post(
       // AUDIT LOG
       // ==========================
       await db.collection("audit_logs").add({
-
         log_id: generateAuditId(),
-
         action_type: "ASSET_DISPOSED",
-
         reference_id: disposal_id,
-
-        asset_id: assignment.asset_id,
-
+        asset_id: primaryAssignment.asset_id, // 👈 FIXED
         office_id: req.user.office_id,
-
         previous_location,
-
         new_location: "DISPOSED",
-
         timestamp: new Date(),
-
-        remarks:
-          `${disposalQty} unit(s) of ${asset_name} disposed via ${disposal_method} by ${req.user.role}: ${req.user.name}`
-
+        remarks: `${disposalQty} unit(s) of ${asset_name} disposed via ${disposal_method} by ${req.user.role}: ${req.user.name}`
       });
 
       res.status(201).json({
@@ -4285,13 +4272,8 @@ app.post(
       });
 
     } catch (err) {
-
       console.error("DISPOSAL CREATE ERROR:", err);
-
-      res.status(500).json({
-        message: "Failed to create disposal record"
-      });
-
+      res.status(500).json({ message: "Failed to create disposal record" });
     }
   }
 );
