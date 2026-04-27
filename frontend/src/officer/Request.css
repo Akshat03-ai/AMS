@@ -278,17 +278,25 @@
     color: #6b7280;
 }
 
-/* ===== ASSET PREVIEW (inside form) ===== */
-.asset-preview {
-    margin-top: 1rem;
-    text-align: center;
+/* ===== ASSET PREVIEW CARD (inside form) ===== */
+.asset-preview-card {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 .asset-preview-img {
-    width: 120px;
-    height: 100px;
+    width: 140px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     border: 2px solid #e5e7eb;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -299,9 +307,37 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
+.asset-preview-info {
+    text-align: center;
+    width: 100%;
+}
+
 .asset-preview-name {
-    margin-top: 0.5rem;
-    font-weight: 500;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.asset-preview-meta {
+    margin: 4px 0;
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.asset-preview-meta span {
+    font-weight: 600;
+    color: #334155;
+}
+
+.asset-preview-meta.desc {
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
+    margin-top: 12px;
+    text-align: left;
 }
 
 

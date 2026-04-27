@@ -28,18 +28,19 @@ function StoreManagerMaintenance() {
   const groupedAssignments = useMemo(() => {
     return Object.values(
       assets.reduce((acc, a) => {
+        const serials = Array.isArray(a.serial_numbers) ? a.serial_numbers : [];
         if (!acc[a.asset_name]) {
           acc[a.asset_name] = {
             ...a,
             assignment_ids: [a.assignment_id],
-            serial_numbers: [...(a.serial_numbers || [])],
+            serial_numbers: [...serials],
             quantity: a.quantity || 0,
             maintenance_quantity: a.maintenance_quantity || 0
           };
         } else {
           acc[a.asset_name].quantity += a.quantity || 0;
           acc[a.asset_name].maintenance_quantity += a.maintenance_quantity || 0;
-          acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
+          acc[a.asset_name].serial_numbers.push(...serials);
           acc[a.asset_name].assignment_ids.push(a.assignment_id);
         }
         return acc;
@@ -92,23 +93,46 @@ function StoreManagerMaintenance() {
     }
   };
 
+  /* ================= PREFILL FIX (MAINTENANCE) ================= */
   useEffect(() => {
-    // Wait for the main data to finish loading
     if (loading || officers.length === 0 || showMaintenanceModal) return;
 
     if (prefill) {
       const officerId = prefill.requested_by || prefill.officer_id || prefill.assigned_to;
 
       if (officerId) {
-        fetchAssignments(officerId).then(() => {
+        fetchAssignments(officerId).then((fetchedAssets) => {
+          let assignmentIdVal = prefill.assignment_id || "";
+          let allGroupSerials = [];
+
+          if (assignmentIdVal) {
+            const matchedAsset = fetchedAssets.find(a => a.assignment_id === assignmentIdVal);
+            if (matchedAsset) {
+              const groupIds = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).map(a => a.assignment_id);
+              assignmentIdVal = JSON.stringify(groupIds);
+              allGroupSerials = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).flatMap(a => a.serial_numbers || []);
+            }
+          } else if (prefill.assignment_ids) {
+            assignmentIdVal = JSON.stringify(prefill.assignment_ids);
+            const matchedAsset = fetchedAssets.find(a => prefill.assignment_ids.includes(a.assignment_id));
+            if (matchedAsset) {
+              allGroupSerials = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).flatMap(a => a.serial_numbers || []);
+            }
+          }
+
+          // 👈 Crucial: Tell the UI about the serials!
+          setSelectedAssignment({ serial_numbers: allGroupSerials });
+
           setForm({
             officer_id: officerId,
-            assignment_id: prefill.assignment_id || "",
-            asset_name: prefill.asset_name || "", // 👈 ADD THIS LINE
+            assignment_id: assignmentIdVal,
+            asset_name: prefill.asset_name || "",
             maintenance_quantity: prefill.quantity || "",
             description: prefill.description ? `Approved Request: ${prefill.description}` : "",
             status: "UNDER_MAINTENANCE",
             request_id: prefill.request_id || "",
+            serial_numbers: prefill.serial_numbers || [],
+            no_serial_quantity: prefill.no_serial_quantity || 0
           });
 
           setShowMaintenanceModal(true);
@@ -141,15 +165,22 @@ function StoreManagerMaintenance() {
       setSelectedAssignment(null);
       setSelectedSerials([]);
       setNoSerialQty(0);
-      setForm(prev => ({ ...prev, assignment_id: "", maintenance_quantity: "" }));
+      setForm(prev => ({ ...prev, assignment_id: "", quantity: "", maintenance_quantity: "", asset_name: "" }));
     }
 
     if (name === "assignment_id") {
+      if (!value) {
+        setSelectedAssignment(null);
+        setSelectedSerials([]);
+        setNoSerialQty(0);
+        setForm(prev => ({ ...prev, assignment_id: "", asset_name: "" }));
+        return;
+      }
       try {
         const parsedIds = JSON.parse(value);
         const group = groupedAssignments.find(g => parsedIds.includes(g.assignment_ids[0]));
         if (group) {
-          setSelectedAssignment({ serial_numbers: group.serial_numbers });
+          setSelectedAssignment({ serial_numbers: group.serial_numbers || [] });
           setSelectedSerials([]);
           setNoSerialQty(0);
           setForm(prev => ({ ...prev, assignment_id: value, asset_name: group.asset_name }));

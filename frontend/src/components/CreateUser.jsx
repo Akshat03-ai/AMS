@@ -240,17 +240,17 @@ function CreateUser() {
 
                     <div className="form-grid">
                         <div>
-                            <label>User ID</label>
+                            <label>User ID<span className="required-star">*</span></label>
                             <input
                                 name="user_id" value={form.user_id} onChange={handleChange} required
                             />
                         </div>
                         <div>
-                            <label>Name</label>
+                            <label>Name<span className="required-star">*</span></label>
                             <input name="name" value={form.name} onChange={handleChange} required />
                         </div>
                         <div>
-                            <label>Contact</label>
+                            <label>Contact<span className="required-star">*</span></label>
                             <input
                                 name="contact"
                                 value={form.contact}
@@ -262,7 +262,7 @@ function CreateUser() {
                             />
                         </div>
                         <div>
-                            <label>Email</label>
+                            <label>Email<span className="required-star">*</span></label>
                             <input
                                 type="email"
                                 name="email"
@@ -273,7 +273,7 @@ function CreateUser() {
                         </div>
 
                         <div>
-                            <label>Designation</label>
+                            <label>Designation<span className="required-star">*</span></label>
                             <input
                                 name="designation"
                                 value={form.designation}
@@ -290,7 +290,7 @@ function CreateUser() {
 
                     <div className="form-grid">
                         <div>
-                            <label>Role</label>
+                            <label>Role<span className="required-star">*</span></label>
                             <select
                                 name="role"
                                 value={form.role}
@@ -307,7 +307,7 @@ function CreateUser() {
                         </div>
 
                         <div>
-                            <label>Department</label>
+                            <label>Department<span className="required-star">*</span></label>
                             <select
                                 name="department_id"
                                 value={form.department_id}
@@ -327,7 +327,7 @@ function CreateUser() {
                         </div>
 
                         <div>
-                            <label>Office</label>
+                            <label>Office<span className="required-star">*</span></label>
                             <select
                                 name="office_id"
                                 value={form.office_id}
@@ -349,7 +349,7 @@ function CreateUser() {
                         </div>
 
                         <div>
-                            <label>Room ID</label>
+                            <label>Room ID<span className="required-star">*</span></label>
                             <input
                                 name="room_id"
                                 value={form.room_id}
@@ -371,7 +371,7 @@ function CreateUser() {
 
                     <div className="form-grid single">
                         <div>
-                            <label>Initial Password</label>
+                            <label>Initial Password<span className="required-star">*</span></label>
                             <input
                                 type="password"
                                 name="password"

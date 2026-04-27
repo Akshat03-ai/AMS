@@ -600,17 +600,32 @@ function Request() {
                                 </select>
                             )}
 
-                            {selectedAsset?.asset_photo_url && (
-                                <div className="asset-preview">
-                                    <img
-                                        src={selectedAsset.asset_photo_url}
-                                        alt={selectedAsset.asset_name}
-                                        className="asset-preview-img clickable"
-                                        onClick={() => setPreviewImage(selectedAsset.asset_photo_url)}
-                                    />
-                                    <p className="asset-preview-name">
-                                        {selectedAsset.asset_name}
-                                    </p>
+                            {/* ASSET PREVIEW CARD */}
+                            {selectedAsset && (
+                                <div className="asset-preview-card">
+                                    {selectedAsset.asset_photo_url && (
+                                        <img
+                                            src={selectedAsset.asset_photo_url}
+                                            alt={selectedAsset.asset_name}
+                                            className="asset-preview-img clickable"
+                                            onClick={() => setPreviewImage(selectedAsset.asset_photo_url)}
+                                        />
+                                    )}
+                                    <div className="asset-preview-info">
+                                        <p className="asset-preview-name">{selectedAsset.asset_name}</p>
+
+                                        {selectedAsset.asset_company && (
+                                            <p className="asset-preview-meta">
+                                                <span>Company:</span> {selectedAsset.asset_company}
+                                            </p>
+                                        )}
+
+                                        {selectedAsset.asset_description && (
+                                            <p className="asset-preview-meta desc">
+                                                <span>Description:</span> {selectedAsset.asset_description}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             )}
 

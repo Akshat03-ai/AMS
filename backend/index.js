@@ -3570,46 +3570,50 @@ app.post(
         return res.status(400).json({ message: "Assignment required" });
 
       // ==========================
-      // FETCH ASSIGNMENT
+      // FETCH ASSIGNMENTS & UPDATE COUNTS
       // ==========================
-      const assignmentSnap = await db
-        .collection("asset_assignments")
-        .where("assignment_id", "==", assignment_id)
-        .limit(1)
-        .get();
+      let assignmentDocs = [];
+      if (req.body.assignment_ids && req.body.assignment_ids.length > 0) {
+        const snaps = await Promise.all(
+          req.body.assignment_ids.map(id => db.collection("asset_assignments").where("assignment_id", "==", id).limit(1).get())
+        );
+        assignmentDocs = snaps.map(s => (s.empty ? null : s.docs[0])).filter(Boolean);
+      } else {
+        const snap = await db.collection("asset_assignments").where("assignment_id", "==", assignment_id).limit(1).get();
+        if (!snap.empty) assignmentDocs = [snap.docs[0]];
+      }
 
-      if (assignmentSnap.empty)
-        return res.status(404).json({ message: "Assignment not found" });
+      if (assignmentDocs.length === 0) return res.status(404).json({ message: "Assignment not found" });
 
-      const assignmentDoc = assignmentSnap.docs[0];
-      const assignment = assignmentDoc.data();
+      let remainingQty = Number(maintenance_quantity || 1);
 
-      const assignmentDocRef = assignmentSnap.docs[0].ref;
+      for (const doc of assignmentDocs) {
+        if (remainingQty <= 0) break;
+        const assignment = doc.data();
+        const availableQty = (Number(assignment.quantity) || 0) - (Number(assignment.maintenance_quantity) || 0);
+        const allocateQty = Math.min(remainingQty, availableQty);
 
-      // ==========================
-      // UPDATE MAINTENANCE COUNT
-      // ==========================
-      const assignedQty = Number(assignment.quantity || 0);
+        if (allocateQty <= 0) continue;
 
-      const currentMaintenance =
-        Number(assignment.maintenance_quantity || 0);
+        await doc.ref.update({
+          assignment_status: "UNDER_MAINTENANCE",
+          maintenance_quantity: (Number(assignment.maintenance_quantity) || 0) + allocateQty
+        });
+        remainingQty -= allocateQty;
+      }
 
-      await assignmentDocRef.update({
-        assignment_status: "UNDER_MAINTENANCE",
-        maintenance_quantity: currentMaintenance + Number(maintenance_quantity || 1)
-      });
+      const primaryAssignment = assignmentDocs[0].data();
 
       // ==========================
       // FETCH ASSET NAME
       // ==========================
       const assetSnap = await db
         .collection("assets")
-        .where("asset_id", "==", assignment.asset_id)
+        .where("asset_id", "==", primaryAssignment.asset_id)
         .limit(1)
         .get();
 
       let asset_name = null;
-
       if (!assetSnap.empty) {
         asset_name = assetSnap.docs[0].data().asset_name;
       }
@@ -3618,56 +3622,30 @@ app.post(
       // FETCH WORKER NAME
       // ==========================
       let worker_name = null;
-
       if (worker_id) {
-
-        const workerSnap = await db
-          .collection("workers")
-          .where("worker_id", "==", worker_id)
-          .limit(1)
-          .get();
-
-        if (!workerSnap.empty) {
-          worker_name = workerSnap.docs[0].data().worker_name;
-        }
-
+        const workerSnap = await db.collection("workers").where("worker_id", "==", worker_id).limit(1).get();
+        if (!workerSnap.empty) worker_name = workerSnap.docs[0].data().worker_name;
       }
 
       // ==========================
-      // GENERATE MAINTENANCE ID
+      // GENERATE MAINTENANCE ID & CREATE
       // ==========================
-      const maintenance_id =
-        "MNT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const maintenance_id = "MNT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-      // ==========================
-      // CREATE RECORD
-      // ==========================
       const maintenanceData = {
-
         maintenance_id,
-
-        assignment_id,
-
-        officer_id: assignment.assigned_to,
-
+        assignment_id, // Store primary ID for reference
+        officer_id: primaryAssignment.assigned_to,
         asset_name,
-
         worker_name,
-
-        maintenance_date: maintenance_date
-          ? new Date(maintenance_date)
-          : new Date(),
-
+        serial_numbers: req.body.serial_numbers || [], // 👈 SAVING SERIALS
+        no_serial_quantity: req.body.no_serial_quantity || 0, // 👈 SAVING BULK
+        maintenance_date: maintenance_date ? new Date(maintenance_date) : new Date(),
         description: description || null,
-
         maintenance_cost: maintenance_cost || 0,
-
         status: status || "pending",
-
         office_id: req.user.office_id,
-
         created_by: req.user.user_id,
-
         created_at: new Date()
       };
 
@@ -3990,7 +3968,6 @@ app.get(
       });
 
       const assignments = Array.from(assignmentDocs.values()).map(doc => {
-
         const data = doc.data();
         const asset = assetMap[data.asset_id] || {};
 
@@ -3999,9 +3976,9 @@ app.get(
           asset_name: asset.asset_name || "Unknown",
           maintenance_quantity: data.maintenance_quantity || 0,
           quantity: data.quantity,
-          asset_id: data.asset_id
+          asset_id: data.asset_id,
+          serial_numbers: data.serial_numbers || [] // 👈 CRITICAL FIX: Send serials to frontend
         };
-
       });
 
       res.json(assignments);
@@ -4148,90 +4125,95 @@ app.post(
       }
 
       // ==========================
-      // FETCH ASSIGNMENT & VALIDATE
+      // FETCH ASSIGNMENTS & VALIDATE
       // ==========================
-      const assignmentSnap = await db
-        .collection("asset_assignments")
-        .where("assignment_id", "==", assignment_id)
-        .limit(1)
-        .get();
+      let assignmentDocs = [];
+      if (req.body.assignment_ids && req.body.assignment_ids.length > 0) {
+        const snaps = await Promise.all(
+          req.body.assignment_ids.map(id => db.collection("asset_assignments").where("assignment_id", "==", id).limit(1).get())
+        );
+        assignmentDocs = snaps.map(s => (s.empty ? null : s.docs[0])).filter(Boolean);
+      } else {
+        const snap = await db.collection("asset_assignments").where("assignment_id", "==", assignment_id).limit(1).get();
+        if (!snap.empty) assignmentDocs = [snap.docs[0]];
+      }
 
-      if (assignmentSnap.empty)
-        return res.status(404).json({ message: "Assignment not found" });
+      if (assignmentDocs.length === 0) return res.status(404).json({ message: "Assignment not found" });
+      const primaryAssignment = assignmentDocs[0].data();
 
-      const assignmentDoc = assignmentSnap.docs[0];
-      const assignment = assignmentDoc.data();
-
-      if (assignment.office_id !== req.user.office_id)
+      if (primaryAssignment.office_id !== req.user.office_id)
         return res.status(403).json({ message: "Unauthorized office asset" });
 
-      if (assignment.returned_date)
+      if (primaryAssignment.returned_date)
         return res.status(400).json({ message: "Asset already returned" });
-
-      // 🔥 FIXED LOGIC: Calculate exactly how many are safely available to dispose
-      const currentQty = Number(assignment.quantity || 0);
-      const maintenanceQty = Number(assignment.maintenance_quantity || 0);
-      const availableToDispose = currentQty - maintenanceQty;
-
-      if (disposalQty > availableToDispose) {
-        return res.status(400).json({
-          message: `Cannot dispose ${disposalQty}. You have ${currentQty} active, but ${maintenanceQty} are under maintenance. Max available: ${availableToDispose}.`
-        });
-      }
 
       // ==========================
       // FETCH ASSET NAME
       // ==========================
-      const assetSnap = await db
-        .collection("assets")
-        .where("asset_id", "==", assignment.asset_id)
-        .limit(1)
-        .get();
-
+      const assetSnap = await db.collection("assets").where("asset_id", "==", primaryAssignment.asset_id).limit(1).get();
       let asset_name = "Unknown";
-
       if (!assetSnap.empty) {
         asset_name = assetSnap.docs[0].data().asset_name;
       }
 
       // ==========================
-      // GENERATE DISPOSAL ID
+      // DEDUCT FROM ASSIGNMENTS & REMOVE SERIALS
       // ==========================
-      const disposal_id =
-        "DSP-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+      const disposalSerials = req.body.serial_numbers || [];
+      let remainingQty = disposalQty;
 
+      for (const doc of assignmentDocs) {
+        if (remainingQty <= 0) break;
+        const assignment = doc.data();
 
+        const activeQty = (Number(assignment.quantity) || 0) - (Number(assignment.maintenance_quantity) || 0);
+        let actualDisposeQty = Math.min(remainingQty, activeQty);
+        let serialsToRemove = [];
+
+        // Pinpoint exact serial numbers to remove from this specific assignment document
+        if (disposalSerials.length > 0) {
+          const assignmentSerials = assignment.serial_numbers || [];
+          serialsToRemove = disposalSerials.filter(sn => assignmentSerials.includes(sn));
+          actualDisposeQty = serialsToRemove.length;
+        }
+
+        if (actualDisposeQty <= 0) continue;
+        remainingQty -= actualDisposeQty;
+
+        // Filter out disposed serials
+        let remainingSerials = assignment.serial_numbers || [];
+        if (serialsToRemove.length > 0) {
+          remainingSerials = remainingSerials.filter(s => !serialsToRemove.includes(s));
+        }
+
+        await doc.ref.update({
+          quantity: Number(assignment.quantity) - actualDisposeQty,
+          disposed_quantity: Number(assignment.disposed_quantity || 0) + actualDisposeQty,
+          serial_numbers: remainingSerials // 👈 Removes scrapped serials from active assignments
+        });
+      }
+
+      // ==========================
+      // GENERATE DISPOSAL ID & CREATE
+      // ==========================
+      const disposal_id = "DSP-" + Math.random().toString(36).substring(2, 7).toUpperCase();
       const { status, disposal_value } = req.body;
 
-      // ==========================
-      // CREATE DISPOSAL RECORD
-      // ==========================
       const disposalData = {
-
         disposal_id,
-
-        assignment_id,
-
-        asset_id: assignment.asset_id,
-
+        assignment_id, // Store primary ID for reference
+        asset_id: primaryAssignment.asset_id,
         asset_name,
-
         quantity: disposalQty,
-
+        serial_numbers: disposalSerials, // 👈 SAVING SERIALS
+        no_serial_quantity: req.body.no_serial_quantity || 0, // 👈 SAVING BULK
         disposal_method,
-
         disposal_value: disposal_value ? Number(disposal_value) : 0,
-
         disposal_reason: disposal_reason || null,
-
-        officer_id: assignment.assigned_to,
-
+        officer_id: primaryAssignment.assigned_to,
         office_id: req.user.office_id,
-
         created_by: req.user.user_id,
-
         status: status || "PENDING",
-
         created_at: new Date(),
         disposal_date: disposal_date ? new Date(disposal_date) : null
       };

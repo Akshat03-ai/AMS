@@ -152,7 +152,9 @@ const Home = () => {
           {/* Text Content Side */}
           <div className="hero-text">
             <h1 className="hero-title">
-              Government Asset Management System
+              Government Office <br className="desktop-break" />
+              Asset Management <br className="desktop-break" />
+              System
             </h1>
 
             <p className="hero-subtitle">

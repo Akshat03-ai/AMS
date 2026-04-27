@@ -25,18 +25,19 @@ function StoreManagerDisposal() {
   const groupedAssignments = useMemo(() => {
     return Object.values(
       assets.reduce((acc, a) => {
+        const serials = Array.isArray(a.serial_numbers) ? a.serial_numbers : [];
         if (!acc[a.asset_name]) {
           acc[a.asset_name] = {
             ...a,
             assignment_ids: [a.assignment_id],
-            serial_numbers: [...(a.serial_numbers || [])],
+            serial_numbers: [...serials],
             quantity: a.quantity || 0,
             maintenance_quantity: a.maintenance_quantity || 0
           };
         } else {
           acc[a.asset_name].quantity += a.quantity || 0;
           acc[a.asset_name].maintenance_quantity += a.maintenance_quantity || 0;
-          acc[a.asset_name].serial_numbers.push(...(a.serial_numbers || []));
+          acc[a.asset_name].serial_numbers.push(...serials);
           acc[a.asset_name].assignment_ids.push(a.assignment_id);
         }
         return acc;
@@ -49,32 +50,52 @@ function StoreManagerDisposal() {
     fetchData();
   }, []);
 
-  /* ================= PREFILL FIX ================= */
+  /* ================= PREFILL FIX (DISPOSAL) ================= */
   useEffect(() => {
-    // ✅ 2. Wait for loading to finish so officers array isn't empty
     if (loading || officers.length === 0 || showDisposalModal) return;
 
     if (prefill) {
-
-      const officerId =
-        prefill.requested_by || prefill.officer_id || prefill.assigned_to;
-
-      setForm(prev => ({
-        ...prev,
-        officer_id: officerId,
-        assignment_id: prefill.assignment_id,
-        quantity: prefill.quantity || "",
-        remarks: prefill.disposal_reason || prefill.description || "",
-        request_id: prefill.request_id || "" // ✅ important fix
-      }));
+      const officerId = prefill.requested_by || prefill.officer_id || prefill.assigned_to;
 
       if (officerId) {
-        fetchAssignments(officerId);
+        fetchAssignments(officerId).then((fetchedAssets) => {
+          let assignmentIdVal = prefill.assignment_id || "";
+          let allGroupSerials = [];
+
+          if (assignmentIdVal) {
+            const matchedAsset = fetchedAssets.find(a => a.assignment_id === assignmentIdVal);
+            if (matchedAsset) {
+              const groupIds = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).map(a => a.assignment_id);
+              assignmentIdVal = JSON.stringify(groupIds);
+              allGroupSerials = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).flatMap(a => a.serial_numbers || []);
+            }
+          } else if (prefill.assignment_ids) {
+            assignmentIdVal = JSON.stringify(prefill.assignment_ids);
+            const matchedAsset = fetchedAssets.find(a => prefill.assignment_ids.includes(a.assignment_id));
+            if (matchedAsset) {
+              allGroupSerials = fetchedAssets.filter(a => a.asset_name === matchedAsset.asset_name).flatMap(a => a.serial_numbers || []);
+            }
+          }
+
+          // 👈 Crucial: Tell the UI about the serials!
+          setSelectedAssignment({ serial_numbers: allGroupSerials });
+
+          setForm(prev => ({
+            ...prev,
+            officer_id: officerId,
+            assignment_id: assignmentIdVal,
+            asset_name: prefill.asset_name || "",
+            quantity: prefill.quantity || "",
+            remarks: prefill.disposal_reason || prefill.description || "",
+            request_id: prefill.request_id || "",
+            serial_numbers: prefill.serial_numbers || [],
+            no_serial_quantity: prefill.no_serial_quantity || 0
+          }));
+
+          setShowDisposalModal(true);
+          navigate(currentPath, { replace: true, state: null });
+        });
       }
-
-      setShowDisposalModal(true);
-
-      navigate(currentPath, { replace: true, state: null });
     }
   }, [prefill, currentPath, navigate, loading, officers.length, showDisposalModal]);
 
@@ -126,36 +147,36 @@ function StoreManagerDisposal() {
   };
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
-
-    setForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setForm(prev => ({ ...prev, [name]: value }));
 
     if (name === "officer_id") {
       fetchAssignments(value);
       setSelectedAssignment(null);
       setSelectedSerials([]);
       setNoSerialQty(0);
-      setForm(prev => ({ ...prev, assignment_id: "", quantity: "" }));
+      setForm(prev => ({ ...prev, assignment_id: "", quantity: "", maintenance_quantity: "", asset_name: "" }));
     }
 
-    if (name === "asset_name") {
-      const group = groupedAssignments.find(g => g.asset_name === value);
-      if (group) {
-        setSelectedAssignment({ serial_numbers: group.serial_numbers });
+    if (name === "assignment_id") {
+      if (!value) {
+        setSelectedAssignment(null);
         setSelectedSerials([]);
         setNoSerialQty(0);
-        setForm(prev => ({
-          ...prev,
-          asset_name: value,
-          assignment_id: JSON.stringify(group.assignment_ids)
-        }));
-      } else {
-        setForm(prev => ({ ...prev, asset_name: "", assignment_id: "" }));
-        setSelectedAssignment(null);
+        setForm(prev => ({ ...prev, assignment_id: "", asset_name: "" }));
+        return;
+      }
+      try {
+        const parsedIds = JSON.parse(value);
+        const group = groupedAssignments.find(g => parsedIds.includes(g.assignment_ids[0]));
+        if (group) {
+          setSelectedAssignment({ serial_numbers: group.serial_numbers || [] });
+          setSelectedSerials([]);
+          setNoSerialQty(0);
+          setForm(prev => ({ ...prev, assignment_id: value, asset_name: group.asset_name }));
+        }
+      } catch (err) {
+        console.error("Parse error on assignment_id");
       }
     }
   };
@@ -504,9 +525,9 @@ function StoreManagerDisposal() {
                 <input type="hidden" name="assignment_id" value={form.assignment_id} />
               </>
             ) : (
-              <select name="asset_name" value={form.asset_name || ""} onChange={handleChange}>
+              <select name="assignment_id" value={form.assignment_id || ""} onChange={handleChange}>
                 <option value="">Select Asset</option>
-                {groupedAssignments.map(a => <option key={a.asset_name} value={a.asset_name}>{a.asset_name}</option>)}
+                {groupedAssignments.map(a => <option key={a.asset_name} value={JSON.stringify(a.assignment_ids)}>{a.asset_name}</option>)}
               </select>
             )}
 
